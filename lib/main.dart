@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:mysql_client/mysql_client.dart';
+import 'dart:io';
+import 'package:mysql1/mysql1.dart';
 
 void main() {
   runApp(LoginApp());
@@ -23,75 +27,61 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin{
-  late TabController _tabController;
   TextEditingController _idController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
+// initState 무엇을 위해?
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     _idController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  void _login() {
+  void _login() async {
     String id = _idController.text;
     String password = _passwordController.text;
     // Perform login authentication here
     print('ID: $id');
     print('Password: $password');
+    var req = LoginPostRequest(id, password);
   }
 
   @override
   Widget build(BuildContext context) {
-    var padding2 = Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () {
-                    _login(); // Perform login
-                  },
-                  child: Text('Login'),
-                ),
-              ],
+    var padding1 =
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _idController,
+              decoration: InputDecoration(
+                labelText: 'ID',
+              ),
             ),
-          );
-    var padding1 = Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _idController,
-                  decoration: InputDecoration(
-                    labelText: 'ID',
-                  ),
-                ),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                  ),
-                ),
-                SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () {
-                    _tabController.animateTo(1); // Switch to the next tab
-                  },
-                  child: Text('Next'),
-                ),
-              ],
+            TextField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
+              ),
             ),
-          );
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                _login();
+              },
+              child: Text('Next'),
+            ),
+          ],
+        ),
+      );
     return Scaffold(
       appBar: AppBar(
         title: Text('Log-In Page'),
@@ -101,3 +91,38 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     );
   }
 }
+
+
+Future<void> dbConnector() async {
+  print("Connecting to mysql server ...");
+
+  final settings = ConnectionSettings(
+    host: 'localhost',
+    port: 3306,
+    user: 'user',
+    password: 'factory',
+    db: 'factory_db',
+  );
+
+  final conn = await MySqlConnection.connect(settings);
+
+  print("Connected");
+
+  await conn.close();
+}
+
+Future<http.Response> fetchPost() async {
+  return http.get(Uri.parse("http://localhost:8081"));
+}
+
+Future<http.Response> LoginPostRequest(String id, String pw) async {
+  return await http.post(
+    Uri.parse("http://localhost:8081"),
+    body: "{id : $id, pw : $pw}"
+    );
+}
+
+// Future<http.Response> testHttpPost() async {
+//   Post requestBody = Post.fromJson(json);
+//   return http.post(Uri.parse("http://localhost:8081"), body: requestBody.toJson());
+// }
