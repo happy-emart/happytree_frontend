@@ -1,11 +1,37 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mysql_client/mysql_client.dart';
-import 'dart:io';
 import 'package:mysql1/mysql1.dart';
+import 'dart:convert';
 
 void main() {
   runApp(LoginApp());
+}
+
+class LoginForm {
+  final String email;
+  final String password;
+
+  LoginForm({
+    required this.email,
+    required this.password,
+});
+
+  factory LoginForm.fromJson(Map<String,dynamic> json)
+  {
+    return LoginForm(
+      email: json["email"],
+      password: json["password"],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "email": email,
+      "password": password,
+    };
+  }
 }
 
 class LoginApp extends StatelessWidget {
@@ -44,12 +70,32 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   }
 
   void _login() async {
+    final String Url = "http://localhost:8080/auth";
+    final request = Uri.parse(Url);
+    var headers = <String, String> {
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+
     String id = _idController.text;
     String password = _passwordController.text;
-    // Perform login authentication here
-    print('ID: $id');
-    print('Password: $password');
-    var req = LoginPostRequest(id, password);
+    var body = {
+      'email': id,
+      'password': password,
+    };
+
+    var response;
+
+      response = await http.post(request, headers: headers, body: json.encode(body));
+      if(response.statusCode == 200)
+      {
+        var responseData = json.decode(response.body);
+        print("request sunggonged");
+        print(responseData);
+      }
+      else
+      {
+        print('Request failed with status: ${response.statusCode}');
+      }
   }
 
   @override
@@ -111,18 +157,3 @@ Future<void> dbConnector() async {
   await conn.close();
 }
 
-Future<http.Response> fetchPost() async {
-  return http.get(Uri.parse("http://localhost:8081"));
-}
-
-Future<http.Response> LoginPostRequest(String id, String pw) async {
-  return await http.post(
-    Uri.parse("http://localhost:8081"),
-    body: "{id : $id, pw : $pw}"
-    );
-}
-
-// Future<http.Response> testHttpPost() async {
-//   Post requestBody = Post.fromJson(json);
-//   return http.post(Uri.parse("http://localhost:8081"), body: requestBody.toJson());
-// }
