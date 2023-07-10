@@ -8,42 +8,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'dart:math' as math;
 
-// Future<void> main() async {
-//   // final settings = ConnectionSettings(
-//   //   host: 'localhost',
-//   //   port: 3306,
-//   //   user: 'user',
-//   //   password: 'factory',
-//   //   db: 'factory_db',
-//   // );
-
-//   // final conn = await MySqlConnection.connect(settings);
-
-//   // final result = await conn.query('SELECT * FROM post');
-//   // for (var row in result) {
-//   //   print(row.fields);
-//   // }
-//   // dbConnector();
-//   final response = await fetchPost();
-//   print(response.body);
-//   // final response = await testHttpPost();
-//   // print(response.body);
-
-//   runApp(const MyApp());
-// }
-
-// void main() => runApp(LocalApp());
-
-// class LocalApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       title: "Our Happy Tree",
-//       home: TabBarDemo(),
-//     );
-//   }
-// }
-
+import 'package:tuple/tuple.dart';
 
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});
@@ -62,16 +27,10 @@ class _FirstState extends State<FirstPage> {
 
   late final topPoint = (centerHeight - deviceWidth)*0.5 - imgSize; // img size = 48
   late final bottomPoint = topPoint + deviceWidth - poleHeight + imgSize; // img size = 48
-  late final startPoint = 0;
+  late final startPoint = 0.0;
   late final endPoint = startPoint + deviceWidth - imgSize; // img size = 48
   List<int> fruits = [];
-    // List<Tuple2<double, double>> pointList = [];
-    // while (pointList.length < 5) {
-    //   var pntX = 0.0, pntY = 0.0;
-    //   if (
-    //     (math.pow(pntX-(centerWidth-imgSize)*0.5, 2) + math.pow(pntY-(centerWidth-imgSize-poleHeight)*0.5, 2))<=math.pow((centerWidth-poleHeight)*0.5, 2)
-    //     ) { pointList.add(Tuple2(pntX, pntY)); }
-    // }
+  List<Tuple2<double, double>> pointList = [];
 
   @override
   void initState()
@@ -82,8 +41,27 @@ class _FirstState extends State<FirstPage> {
 
   Future<String?> getJwtToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     return prefs.getString('jwtToken');
+  }
+
+  bool isNotValidLetterPos(List<String> letters, double x, double y) {
+    // return false;
+    // double comp_x, comp_y;
+    // get list of letter from DB
+    // 
+    //  for letter in letters :
+    //    if abs(comp_x - x) < 48 && abs(comp_y - y) < 48:
+    //      return true;
+      if ((math.pow(x-(centerWidth-imgSize)*0.5, 2) + math.pow(y-(centerWidth-imgSize-poleHeight)*0.5, 2))>=math.pow((centerWidth-poleHeight)*0.5, 2)) {
+        return true;
+      }
+
+  return false;
+  }
+
+  (double, double) getRandPos(double startPoint, double endPoint, double deviceWidth) {
+  // createFruit(context , startPoint, 48+ math.Random().nextDouble()*(deviceWidth-48), 1),
+    return (startPoint, (48+ math.Random().nextDouble()*(deviceWidth-48)).toDouble());
   }
 
   void fetchFruits() async {
@@ -103,6 +81,14 @@ class _FirstState extends State<FirstPage> {
     catch(error)
     {
       print('error : $error');
+    }
+    
+    while (pointList.length < 5) {
+      var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
+      if (!isNotValidLetterPos([], x, y)) { pointList.add(Tuple2(x, y)); }
+    }
+
+    for (var point in pointList) {
     }
 
     fruits.add(1);

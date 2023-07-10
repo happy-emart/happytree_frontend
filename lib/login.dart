@@ -48,7 +48,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   void _login() async {
     // final String Url = "http://127.0.0.1:8080/auth";
     // final String Url = "http://10.0.2.2:8081";
-    const String Url = "http://localhost:8081";
+    // const String Url = "http://localhost:8081";
+    const String Url = "http://localhost:8080";
     final request = Uri.parse(Url);
     var headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -60,6 +61,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       'email': id,
       'password': password,
     };
+      startFirstPage(context);
 
     http.Response response;
 
@@ -71,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       // final payload = utf8.decode(base64Url.decode(jwtParts[1]));
       // storeJwtToken(response.body);
 
-      startFirstPage(context);
+      // startFirstPage(context);
     }
     else
     {
