@@ -28,13 +28,6 @@ class _FirstState extends State<FirstPage> {
   late final startPoint = 0;
   late final endPoint = startPoint + deviceWidth - imgSize; // img size = 48
   List<int> fruits = [];
-    // List<Tuple2<double, double>> pointList = [];
-    // while (pointList.length < 5) {
-    //   var pntX = 0.0, pntY = 0.0;
-    //   if (
-    //     (math.pow(pntX-(centerWidth-imgSize)*0.5, 2) + math.pow(pntY-(centerWidth-imgSize-poleHeight)*0.5, 2))<=math.pow((centerWidth-poleHeight)*0.5, 2)
-    //     ) { pointList.add(Tuple2(pntX, pntY)); }
-    // }
 
   @override
   void initState()
