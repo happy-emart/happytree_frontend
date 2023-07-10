@@ -65,7 +65,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     if(response.statusCode == 200)
     {
       storeJwtToken(response.body);
-
       startFirstPage(context);
     }
     else

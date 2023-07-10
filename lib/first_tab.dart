@@ -19,8 +19,8 @@ class FirstPage extends StatefulWidget {
 class _FirstState extends State<FirstPage> {
   late double deviceWidth = MediaQuery.of(context).size.width;  // 화면의 가로 크기
   late double deviceHeight = MediaQuery.of(context).size.height; // 화면의 세로 크기
-  late double centerHeight;
-  late double centerWidth;
+  late double centerHeight = 0.0;
+  late double centerWidth = 0.0;
   late double poleHeight = deviceWidth*0.13;
   double imgSize = 48; // 1:1 image
 
@@ -28,6 +28,8 @@ class _FirstState extends State<FirstPage> {
   late final bottomPoint = topPoint + deviceWidth - poleHeight + imgSize; // img size = 48
   late final startPoint = 0.0;
   late final endPoint = startPoint + deviceWidth - imgSize; // img size = 48
+  List<int> fruits = [];
+  List<Container> yeolmae = [];
   List<Tuple2<double, double>> pointList = [];
 
   Future<String?> getJwtToken() async {
@@ -36,14 +38,21 @@ class _FirstState extends State<FirstPage> {
   }
 
   bool isNotValidLetterPos(List<String> letters, double x, double y) {
-      if ((math.pow(x-(centerWidth-imgSize)*0.5, 2) + math.pow(y-(centerWidth-imgSize-poleHeight)*0.5, 2))>=math.pow((centerWidth-poleHeight)*0.5, 2)) {
-        return true;
-      }
-  return false;
+    // return false;
+    // double comp_x, comp_y;
+    // get list of letter from DB
+    // 
+    //  for letter in letters :
+    //    if abs(comp_x - x) < 48 && abs(comp_y - y) < 48:
+    //      return true;
+    if ((math.pow(x-(centerWidth-imgSize)*0.5, 2) + math.pow(y-(centerWidth-imgSize-poleHeight)*0.5, 2))>=math.pow((centerWidth-poleHeight)*0.5, 2)) {
+      return true;
+    }
+    return false;
   }
 
   (double, double) getRandPos(double startPoint, double endPoint, double deviceWidth) {
-    return (startPoint, (48+ math.Random().nextDouble()*(deviceWidth-48)).toDouble());
+    return (topPoint + math.Random().nextDouble()*(endPoint-startPoint), startPoint + math.Random().nextDouble()*(endPoint-startPoint));
   }
 
   Future<List<int>> fetchFruits() async {
@@ -64,21 +73,20 @@ class _FirstState extends State<FirstPage> {
     {
       print('error : $error');
     }
-    
-    // while (pointList.length < 5) {
-    //   var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
-    //   if (!isNotValidLetterPos([], x, y)) { pointList.add(Tuple2(x, y)); }
-    // }
-    //
-    // for (var point in pointList) {
-    // }
-
-
     return [];
   }
 
   Future<Stack> buildTree(double cntrHeight, double cntrWidth, BuildContext context) async {
     List<int> fruits = await fetchFruits();
+    while (pointList.length < 5) {
+      var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
+      if (!isNotValidLetterPos([], x, y)) { pointList.add(Tuple2(x, y)); }
+    }
+
+    for (int i = 0; i < 4; i++) {
+      var ttop = pointList[i].item1, rright = pointList[i].item2;
+      yeolmae.add(createFruit(context, ttop, rright, i+1));
+    }
     return Stack(
             children: [
               Container(
@@ -103,8 +111,10 @@ class _FirstState extends State<FirstPage> {
                   ],
                 ),
               ),
-              for(var fruit in fruits)
-                createFruit(context , startPoint + math.Random().nextDouble()*(endPoint-startPoint), 48+ math.Random().nextDouble()*(deviceWidth-48), fruit),
+              for(var yeolmae in yeolmae)
+                yeolmae,
+              createFruit(context, bottomPoint, endPoint, 5),
+              createFruit(context, topPoint, startPoint, 5),
               ],
               // buildImageStack(5),
           );
@@ -221,9 +231,10 @@ class _FirstState extends State<FirstPage> {
   ),
   onTap: () {
   print("이 버튼은 절대 누르지 마세요.");
+              Tuple2<double, double> position= Tuple2(100.0, 100.0);
   Navigator.push(
   context,
-  MaterialPageRoute(builder: (context) => const LetterScreen()),
+                MaterialPageRoute(builder: (context) => LetterScreen(argument: position)),
   );
   },
   ),
