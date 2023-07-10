@@ -58,8 +58,6 @@ class _FirstState extends State<FirstPage> {
     try
     {
       final response = await http.get(request, headers: headers);
-      print('body : ');
-      print(response.body);
       return List.from([1, 2, 3]);
     }
     catch(error)
