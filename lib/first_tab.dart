@@ -184,9 +184,34 @@ class _FirstState extends State<FirstPage> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   late List<Widget> _widgetOptions = <Widget>[
     buildTree(centerWidth, centerWidth, context),
-    Text(
-      'Likes',
-      style: optionStyle,
+    Stack(
+      children:[
+      buildTree(centerWidth, centerWidth, context),
+      Positioned(
+        left: 0,
+        right: 0,
+        bottom: deviceHeight/30,
+        child: Transform.scale(
+          scale: 0.5,
+          child: InkWell( 
+            // splashRadius: 50,
+            child: Container(
+              child: Image.asset(
+                "assets/images/writeimg.png",
+                fit: BoxFit.cover,
+              ),
+            ),
+            onTap: () {
+              print("이 버튼은 절대 누르지 마세요.");
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LetterScreen()),
+              );
+            },
+          ),
+        ),
+      ),
+      ],
     ),
     Text(
       'Search',
@@ -395,35 +420,35 @@ void startFirstPage(BuildContext context) {
 //           body: TabBarView(
 //             children: [
 //               buildTree(cntrWidth, cntrWidth, context),
-//               Stack(
-//                 children:[
-//                 buildTree(cntrWidth, cntrWidth, context),
-//                 Positioned(
-//                   left: 0,
-//                   right: 0,
-//                   bottom: deviceHeight/30,
-//                   child: Transform.scale(
-//                     scale: 0.5,
-//                     child: InkWell( 
-//                       // splashRadius: 50,
-//                       child: Container(
-//                         child: Image.asset(
-//                           "assets/images/writeimg.png",
-//                           fit: BoxFit.cover,
-//                         ),
-//                       ),
-//                       onTap: () {
-//                         print("이 버튼은 절대 누르지 마세요.");
-//                         Navigator.push(
-//                           context,
-//                           MaterialPageRoute(builder: (context) => const LetterScreen()),
-//                         );
-//                       },
-//                     ),
-//                   ),
-//                 ),
-//                 ],
-//               ),
+              // Stack(
+              //   children:[
+              //   buildTree(cntrWidth, cntrWidth, context),
+              //   Positioned(
+              //     left: 0,
+              //     right: 0,
+              //     bottom: deviceHeight/30,
+              //     child: Transform.scale(
+              //       scale: 0.5,
+              //       child: InkWell( 
+              //         // splashRadius: 50,
+              //         child: Container(
+              //           child: Image.asset(
+              //             "assets/images/writeimg.png",
+              //             fit: BoxFit.cover,
+              //           ),
+              //         ),
+              //         onTap: () {
+              //           print("이 버튼은 절대 누르지 마세요.");
+              //           Navigator.push(
+              //             context,
+              //             MaterialPageRoute(builder: (context) => const LetterScreen()),
+              //           );
+              //         },
+              //       ),
+              //     ),
+              //   ),
+              //   ],
+              // ),
 //               Icon(Icons.directions_bike),
 //             ],
 //           ),
