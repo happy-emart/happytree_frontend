@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:mysql_client/mysql_client.dart';
 import 'dart:io';
 import 'package:mysql1/mysql1.dart';
+import 'package:tuple/tuple.dart';
 import 'crud_service.dart' as crud;
 import 'post.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -68,37 +69,51 @@ class _FirstState extends State<FirstPage> {
   late double centerHeight;
   late double centerWidth;
   late double poleHeight = deviceWidth*0.13;
-  late final startPoint = (centerHeight - deviceWidth)*0.5;
-  late final endPoint = startPoint + deviceWidth - poleHeight;
+  double imgSize = 48; // 1:1 image
+  late final topPoint = (centerHeight - deviceWidth)*0.5 - imgSize; // img size = 48
+  late final bottomPoint = topPoint + deviceWidth - poleHeight + imgSize; // img size = 48
+  late final startPoint = 0;
+  late final endPoint = startPoint + deviceWidth - imgSize; // img size = 48
+
   Stack buildTree(double cntrHeight, double cntrWidth, BuildContext context) {
+    // List<Tuple2<double, double>> pointList = [];
+    // while (pointList.length < 5) {
+    //   var pntX = 0.0, pntY = 0.0;
+    //   if (
+    //     (math.pow(pntX-(centerWidth-imgSize)*0.5, 2) + math.pow(pntY-(centerWidth-imgSize-poleHeight)*0.5, 2))<=math.pow((centerWidth-poleHeight)*0.5, 2)
+    //     ) { pointList.add(Tuple2(pntX, pntY)); }
+    // }
+
     return Stack(
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/tree.png'),
-                            fit: BoxFit.fill,
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/tree.png'),
+                              fit: BoxFit.fill,
+                            ),
                           ),
+                          height: cntrWidth,
+                          width: cntrWidth,
                         ),
-                        height: cntrWidth,
-                        width: cntrWidth,
-                      ),
-                    ]
-                  ),
-                ],
+                      ]
+                    ),
+                  ],
+                ),
               ),
-              createFruit(context , startPoint + math.Random().nextDouble()*(endPoint-startPoint), 48+ math.Random().nextDouble()*(deviceWidth-48), 1),
-              createFruit(context , startPoint + math.Random().nextDouble()*(endPoint-startPoint), 48+math.Random().nextDouble()*(deviceWidth-48), 2),
-              createFruit(context , startPoint + math.Random().nextDouble()*(endPoint-startPoint), 48+math.Random().nextDouble()*(deviceWidth-48), 3),
-              createFruit(context , startPoint + math.Random().nextDouble()*(endPoint-startPoint), 48+math.Random().nextDouble()*(deviceWidth-48), 4),
-              ],
+              // createFruit(context , topPoint+math.Random().nextDouble()*(bottomPoint-topPoint), startPoint+math.Random().nextDouble()*(endPoint-startPoint), 2),
+              // createFruit(context , topPoint+math.Random().nextDouble()*(bottomPoint-topPoint), startPoint+math.Random().nextDouble()*(endPoint-startPoint), 3),
+              // createFruit(context , topPoint+math.Random().nextDouble()*(bottomPoint-topPoint), startPoint+math.Random().nextDouble()*(endPoint-startPoint), 4),
+
               // buildImageStack(5),
+            ],
           );
   }
 

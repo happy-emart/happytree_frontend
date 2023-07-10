@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/first_tab.dart';
-import 'package:flutter_application_1/justsample.dart';
 import 'package:http/http.dart' as http;
 import 'package:mysql1/mysql1.dart';
 import 'dart:convert';
@@ -45,7 +44,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   }
 
   void _login() async {
-    final String Url = "http://127.0.0.1:8080/auth";
+    // final String Url = "http://127.0.0.1:8080/auth";
+    // final String Url = "http://10.0.2.2:8081";
+    final String Url = "http://localhost:8081";
     final request = Uri.parse(Url);
     var headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -57,16 +58,17 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       'email': id,
       'password': password,
     };
+      startFirstPage(context);
 
     var response;
 
     response = await http.post(request, headers: headers, body: json.encode(body));
     if(response.statusCode == 200)
     {
-      final jwtParts = response.body.split('.');
+      // final jwtParts = response.body.split('.');
 
-      final payload = utf8.decode(base64Url.decode(jwtParts[1]));
-      storeJwtToken(response.body);
+      // final payload = utf8.decode(base64Url.decode(jwtParts[1]));
+      // storeJwtToken(response.body);
 
       startFirstPage(context);
     }
