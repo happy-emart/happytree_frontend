@@ -2,14 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/first_tab.dart';
-import 'package:flutter_application_1/justsample.dart';
 import 'package:http/http.dart' as http;
-import 'package:mysql1/mysql1.dart';
-import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginApp extends StatelessWidget {
+  const LoginApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,19 +16,21 @@ class LoginApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginScreen(),
+      home: const LoginScreen(),
     );
   }
 }
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin{
-  TextEditingController _idController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
 // initState 무엇을 위해?
   @override
@@ -45,7 +46,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   }
 
   void _login() async {
-    final String Url = "http://127.0.0.1:8080/auth";
+    // final String Url = "http://127.0.0.1:8080/auth";
+    // final String Url = "http://10.0.2.2:8081";
+    const String Url = "http://localhost:8081";
     final request = Uri.parse(Url);
     var headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -58,15 +61,15 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       'password': password,
     };
 
-    var response;
+    http.Response response;
 
     response = await http.post(request, headers: headers, body: json.encode(body));
     if(response.statusCode == 200)
     {
-      final jwtParts = response.body.split('.');
+      // final jwtParts = response.body.split('.');
 
-      final payload = utf8.decode(base64Url.decode(jwtParts[1]));
-      storeJwtToken(response.body);
+      // final payload = utf8.decode(base64Url.decode(jwtParts[1]));
+      // storeJwtToken(response.body);
 
       startFirstPage(context);
     }
@@ -85,30 +88,30 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         children: [
           TextField(
             controller: _idController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'ID',
             ),
           ),
           TextField(
             controller: _passwordController,
             obscureText: true,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Password',
             ),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {
               _login();
             },
-            child: Text('Next'),
+            child: const Text('Next'),
           ),
         ],
       ),
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text('Log-In Page'),
+        title: const Text('Log-In Page'),
       ),
       body:
       padding3,

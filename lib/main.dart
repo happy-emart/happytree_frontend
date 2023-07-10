@@ -1,11 +1,7 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/sign_in.dart';
-import 'package:flutter_application_1/first_tab.dart';
-import 'package:http/http.dart' as http;
 import 'package:mysql1/mysql1.dart';
-import 'dart:convert';
 import 'login.dart';
 
 void main() => runApp(MaterialApp(
@@ -16,7 +12,7 @@ void main() => runApp(MaterialApp(
     theme: ThemeData(
       primaryColor: Colors.grey[800],
     ),
-    home: MainScreen()));
+    home: const MainScreen()));
 
 // class MainApp extends StatelessWidget {
 //   @override
@@ -32,6 +28,8 @@ void main() => runApp(MaterialApp(
 // }
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -53,22 +51,22 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginApp()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginApp()));
               },
-              child: Text('Login'),
+              child: const Text('Login'),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => SignInApp()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInApp()));
               },
-              child: Text('Sign Up'),
+              child: const Text('Sign Up'),
             ),
           ],
         ),
       );
     return Scaffold(
       appBar: AppBar(
-        title: Text('Main-Page'),
+        title: const Text('Main-Page'),
       ),
       body:
         padding1,
