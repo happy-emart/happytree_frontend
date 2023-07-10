@@ -73,23 +73,3 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
     );
   }
 }
-
-
-Future<void> dbConnector() async {
-  print("Connecting to mysql server ...");
-
-  final settings = ConnectionSettings(
-    host: 'localhost',
-    port: 3306,
-    user: 'user',
-    password: 'factory',
-    db: 'factory_db',
-  );
-
-  final conn = await MySqlConnection.connect(settings);
-
-  print("Connected");
-
-  await conn.close();
-}
-

@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'dart:math' as math;
-
 import 'package:tuple/tuple.dart';
 
 class FirstPage extends StatefulWidget {
@@ -35,7 +34,6 @@ class _FirstState extends State<FirstPage> {
   @override
   void initState()
   {
-    super.initState();
     fetchFruits();
   }
 
@@ -65,7 +63,7 @@ class _FirstState extends State<FirstPage> {
   }
 
   void fetchFruits() async {
-    const String Url = "http://127.0.0.1:8080/received_letters";
+    const String Url = "http://127.0.0.1:8080/";
     final jwtToken = await getJwtToken();
     print('Bearer $jwtToken');
     final request = Uri.parse(Url);
@@ -76,6 +74,7 @@ class _FirstState extends State<FirstPage> {
     try
     {
       final response = await http.get(request, headers: headers);
+      print('body : ');
       print(response.body);
     }
     catch(error)
