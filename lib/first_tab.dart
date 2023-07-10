@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'dart:math' as math;
+import 'package:tuple/tuple.dart';
 
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});
@@ -25,9 +26,10 @@ class _FirstState extends State<FirstPage> {
 
   late final topPoint = (centerHeight - deviceWidth)*0.5 - imgSize; // img size = 48
   late final bottomPoint = topPoint + deviceWidth - poleHeight + imgSize; // img size = 48
-  late final startPoint = 0;
+  late final startPoint = 0.0;
   late final endPoint = startPoint + deviceWidth - imgSize; // img size = 48
   List<int> fruits = [];
+  List<Tuple2<double, double>> pointList = [];
 
   @override
   void initState()
@@ -40,8 +42,28 @@ class _FirstState extends State<FirstPage> {
     return prefs.getString('jwtToken');
   }
 
+  bool isNotValidLetterPos(List<String> letters, double x, double y) {
+    // return false;
+    // double comp_x, comp_y;
+    // get list of letter from DB
+    // 
+    //  for letter in letters :
+    //    if abs(comp_x - x) < 48 && abs(comp_y - y) < 48:
+    //      return true;
+      if ((math.pow(x-(centerWidth-imgSize)*0.5, 2) + math.pow(y-(centerWidth-imgSize-poleHeight)*0.5, 2))>=math.pow((centerWidth-poleHeight)*0.5, 2)) {
+        return true;
+      }
+
+  return false;
+  }
+
+  (double, double) getRandPos(double startPoint, double endPoint, double deviceWidth) {
+  // createFruit(context , startPoint, 48+ math.Random().nextDouble()*(deviceWidth-48), 1),
+    return (startPoint, (48+ math.Random().nextDouble()*(deviceWidth-48)).toDouble());
+  }
+
   void fetchFruits() async {
-    const String Url = "http://127.0.0.1:8080/received_letters";
+    const String Url = "http://127.0.0.1:8080/";
     final jwtToken = await getJwtToken();
     print('Bearer $jwtToken');
     final request = Uri.parse(Url);
@@ -58,6 +80,14 @@ class _FirstState extends State<FirstPage> {
     catch(error)
     {
       print('error : $error');
+    }
+    
+    while (pointList.length < 5) {
+      var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
+      if (!isNotValidLetterPos([], x, y)) { pointList.add(Tuple2(x, y)); }
+    }
+
+    for (var point in pointList) {
     }
 
     fruits.add(1);
