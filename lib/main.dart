@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/sign_in.dart';
 import 'package:mysql1/mysql1.dart';
+import 'kakao_login.dart';
 import 'login.dart';
 
 void main() => runApp(MaterialApp(
@@ -60,6 +61,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInApp()));
               },
               child: const Text('Sign Up'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const KakaoApp()));
+              },
+              child: const Text('Login with Kakaotalk'),
             ),
           ],
         ),
