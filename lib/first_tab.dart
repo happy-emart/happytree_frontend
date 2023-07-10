@@ -28,14 +28,9 @@ class _FirstState extends State<FirstPage> {
   late final bottomPoint = topPoint + deviceWidth - poleHeight + imgSize; // img size = 48
   late final startPoint = 0.0;
   late final endPoint = startPoint + deviceWidth - imgSize; // img size = 48
-  List<Container> fruits = [];
+  List<int> fruits = [];
+  List<Container> yeolmae = [];
   List<Tuple2<double, double>> pointList = [];
-
-  @override
-  void initState()
-  {
-    fetchFruits();
-  }
 
   Future<String?> getJwtToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -53,7 +48,6 @@ class _FirstState extends State<FirstPage> {
     if ((math.pow(x-(centerWidth-imgSize)*0.5, 2) + math.pow(y-(centerWidth-imgSize-poleHeight)*0.5, 2))>=math.pow((centerWidth-poleHeight)*0.5, 2)) {
       return true;
     }
-
     return false;
   }
 
@@ -61,8 +55,8 @@ class _FirstState extends State<FirstPage> {
     return (topPoint + math.Random().nextDouble()*(endPoint-startPoint), startPoint + math.Random().nextDouble()*(endPoint-startPoint));
   }
 
-  void fetchFruits() async {
-    const String Url = "http://127.0.0.1:8080/";
+  Future<List<int>> fetchFruits() async {
+    const String Url = "http://127.0.0.1:8080/received_letters";
     final jwtToken = await getJwtToken();
     print('Bearer $jwtToken');
     final request = Uri.parse(Url);
@@ -73,23 +67,17 @@ class _FirstState extends State<FirstPage> {
     try
     {
       final response = await http.get(request, headers: headers);
-      // print('body : ');
-      // print(response.body);
+      return List.from([1, 2, 3]);
     }
     catch(error)
     {
       print('error : $error');
     }
+    return [];
   }
 
-  Stack buildTree(double cntrHeight, double cntrWidth, BuildContext context, List<dynamic> fruits) {
-    // for (int i = 0; i < 4; i++) {
-    //   var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
-    //   if (!isNotValidLetterPos([], x, y)) { pointList.add(Tuple2(x, y)); }
-    //   print((x, y));
-    //   print(!isNotValidLetterPos([], x, y));
-    // }
-
+  Future<Stack> buildTree(double cntrHeight, double cntrWidth, BuildContext context) async {
+    List<int> fruits = await fetchFruits();
     while (pointList.length < 5) {
       var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
       if (!isNotValidLetterPos([], x, y)) { pointList.add(Tuple2(x, y)); }
@@ -97,7 +85,7 @@ class _FirstState extends State<FirstPage> {
 
     for (int i = 0; i < 4; i++) {
       var ttop = pointList[i].item1, rright = pointList[i].item2;
-      fruits.add(createFruit(context, ttop, rright, i+1));
+      yeolmae.add(createFruit(context, ttop, rright, i+1));
     }
     return Stack(
             children: [
@@ -123,8 +111,8 @@ class _FirstState extends State<FirstPage> {
                   ],
                 ),
               ),
-              for(var fruit in fruits)
-                fruit,
+              for(var yeolmae in yeolmae)
+                yeolmae,
               createFruit(context, bottomPoint, endPoint, 5),
               createFruit(context, topPoint, startPoint, 5),
               ],
@@ -215,130 +203,138 @@ class _FirstState extends State<FirstPage> {
 
 
   late final List<Widget> _widgetOptions = <Widget>[
-    buildTree(centerWidth, centerWidth, context, fruits),
-    Stack(
-      children:[
-      buildTree(centerWidth, centerWidth, context, fruits),
-      Positioned(
-        left: 0,
-        right: 0,
-        bottom: deviceHeight/30,
-        child: Transform.scale(
-          scale: 0.5,
-          child: InkWell( 
-            // splashRadius: 50,
-            child: Container(
-              child: Image.asset(
-                "assets/images/writeimg.png",
-                fit: BoxFit.cover,
-              ),
-            ),
-            onTap: () {
-              print("이 버튼은 절대 누르지 마세요.");
+    FutureBuilder<Stack>(
+      future: buildTree(centerWidth, centerWidth, context),
+      builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
+      if (snapshot.hasData) {
+        return snapshot.data!;
+      } else {
+        return CircularProgressIndicator();
+      }
+    },
+    ),
+  Stack(
+  children: [
+  Positioned(
+  left: 0,
+  right: 0,
+  bottom: deviceHeight / 30,
+  child: Transform.scale(
+  scale: 0.5,
+  child: InkWell(
+  // splashRadius: 50,
+  child: Container(
+  child: Image.asset(
+  "assets/images/writeimg.png",
+  fit: BoxFit.cover,
+  ),
+  ),
+  onTap: () {
+  print("이 버튼은 절대 누르지 마세요.");
               Tuple2<double, double> position= Tuple2(100.0, 100.0);
-              Navigator.push(
-                context,
+  Navigator.push(
+  context,
                 MaterialPageRoute(builder: (context) => LetterScreen(argument: position)),
-              );
-            },
-          ),
-        ),
-      ),
-      ],
-    ),
-    const Text(
-      'Search',
-      style: optionStyle,
-    ),
-    const Text(
-      'Profile',
-      style: optionStyle,
-    ),
+  );
+  },
+  ),
+  ),
+  ),
+  ],
+  ),
+  const Text(
+  'Search',
+  style: optionStyle,
+  ),
+  const Text(
+  'Profile',
+  style: optionStyle,
+  ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children:[
-        Image.asset(
-          "assets/images/universe2.png",
-          height: deviceHeight,
-          width: deviceWidth,
-          fit: BoxFit.cover,
-        ),
-        Scaffold(
-        backgroundColor: Colors.transparent,
-        // back
-        // appBar: AppBar(
-        //   elevation: 20,
-        //   title: const Text('GoogleNavBar'),
-        // ),
-        body: Padding(
-          padding: EdgeInsets.fromLTRB(0, deviceHeight*0.07, 0, 0),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              centerHeight = constraints.maxHeight;
-              centerWidth = constraints.maxWidth;
-              print("deviceHeight: $deviceHeight, deviceWidth: $deviceWidth, centerHeight: $centerHeight, centerWidth: $centerWidth");
+        children:[
+          Image.asset(
+            "assets/images/universe2.png",
+            height: deviceHeight,
+            width: deviceWidth,
+            fit: BoxFit.cover,
+          ),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            // back
+            // appBar: AppBar(
+            //   elevation: 20,
+            //   title: const Text('GoogleNavBar'),
+            // ),
+            body: Padding(
+              padding: EdgeInsets.fromLTRB(0, deviceHeight*0.07, 0, 0),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  centerHeight = constraints.maxHeight;
+                  centerWidth = constraints.maxWidth;
+                  print("deviceHeight: $deviceHeight, deviceWidth: $deviceWidth, centerHeight: $centerHeight, centerWidth: $centerWidth");
 
-              return Center(
-                child: _widgetOptions.elementAt(_selectedIndex),
-              );
-            },
-          ),
-        ),
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 0, 0, 0),
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 20,
-                color: Colors.black.withOpacity(.1),
-              )
-            ],
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-              child: GNav(
-                rippleColor: const Color.fromARGB(255, 0, 0, 0),
-                hoverColor: const Color.fromARGB(255, 96, 69, 69),
-                gap: 8,
-                activeColor: const Color.fromARGB(255, 0, 0, 0),
-                iconSize: 24,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                duration: const Duration(milliseconds: 400),
-                tabBackgroundColor: Colors.grey[100]!,
-                color: const Color.fromARGB(255, 255, 255, 255),
-                tabs: const [
-                  GButton(
-                    icon: LineIcons.home,
-                    text: 'Home',
-                  ),
-                  GButton(
-                    icon: LineIcons.heart,
-                    text: 'Likes',
-                  ),
-                  GButton(
-                    icon: LineIcons.search,
-                    text: 'Search',
-                  ),
-                  GButton(
-                    icon: LineIcons.user,
-                    text: 'Profile',
-                  ),
-                ],
-                selectedIndex: _selectedIndex,
-                onTabChange: (index) {
-                  setState(() {
-                    _selectedIndex = index;
-                  });
+                  return Center(
+                    child: _widgetOptions.elementAt(_selectedIndex),
+                  );
                 },
               ),
             ),
-          ),
-        ),
-      ),]
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 0, 0, 0),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 20,
+                    color: Colors.black.withOpacity(.1),
+                  )
+                ],
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+                  child: GNav(
+                    rippleColor: const Color.fromARGB(255, 0, 0, 0),
+                    hoverColor: const Color.fromARGB(255, 96, 69, 69),
+                    gap: 8,
+                    activeColor: const Color.fromARGB(255, 0, 0, 0),
+                    iconSize: 24,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    duration: const Duration(milliseconds: 400),
+                    tabBackgroundColor: Colors.grey[100]!,
+                    color: const Color.fromARGB(255, 255, 255, 255),
+                    tabs: const [
+                      GButton(
+                        icon: LineIcons.home,
+                        text: 'Home',
+                      ),
+                      GButton(
+                        icon: LineIcons.heart,
+                        text: 'Likes',
+                      ),
+                      GButton(
+                        icon: LineIcons.search,
+                        text: 'Search',
+                      ),
+                      GButton(
+                        icon: LineIcons.user,
+                        text: 'Profile',
+                      ),
+                    ],
+                    selectedIndex: _selectedIndex,
+                    onTabChange: (index) {
+                      setState(() {
+                        _selectedIndex = index;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),]
     );
   }
 }
