@@ -31,6 +31,26 @@ class _LetterScreenState extends State<LetterScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            ElevatedButton(
+              onPressed: () {
+                // Handle letter submission
+                var posX = argument.item1, posY = argument.item1;
+                String letter = _letterController.text;
+                // set Letter Data
+                var body = {
+                  // 'receiverId': receiverId,
+                  'text': letter,
+                  // 'openDate':
+                  // 'isAno':
+                  'posX':posX,
+                  'posY':posY,
+                  // 'img Type'
+                };
+                // 작성을 완료했습니다 토스트 띄우기
+                Navigator.pop(context);
+              },
+              child: const Text('Select Other User'),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child:
