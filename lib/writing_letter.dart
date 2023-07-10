@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -50,7 +49,6 @@ class _LetterScreenState extends State<LetterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Long receiverId;
 
     return Scaffold(
       appBar: AppBar(
