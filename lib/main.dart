@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/first_tab.dart';
 import 'package:http/http.dart' as http;
 import 'package:mysql_client/mysql_client.dart';
 import 'dart:io';
@@ -75,7 +76,12 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                _login();
+                // _login();
+                // Navigator.pushReplacement(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const startFirstPage())
+                // );
+                startFirstPage(context);
               },
               child: Text('Next'),
             ),

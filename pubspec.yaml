@@ -44,6 +44,8 @@ dependencies:
   mysql1: ^0.20.0
   shared_preferences: ^2.1.0 # 공유저장소 사용을 하기 위함(자동 로그인)
   crypto: ^3.0.3 # 정보 암호화를 위함 (사용자 비밀번호 암호화)
+  google_nav_bar: ^5.0.6
+  line_icons: ^2.0.3
   
 dev_dependencies:
   flutter_test:
