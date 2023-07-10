@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:mysql1/mysql1.dart';
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class LoginApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -57,16 +59,14 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     var response;
 
     response = await http.post(request, headers: headers, body: json.encode(body));
-    print("response printed!!");
-    print(response);
     if(response.statusCode == 200)
     {
-      print("request sunggonged");
-      print(response.body);
       final jwtParts = response.body.split('.');
 
       final payload = utf8.decode(base64Url.decode(jwtParts[1]));
-      print(payload);
+      storeJwtToken(response.body);
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) => LocalApp()));
     }
     else
     {
@@ -111,5 +111,10 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       body:
       padding3,
     );
+  }
+
+  Future<void> storeJwtToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('jwtToken', token);
   }
 }

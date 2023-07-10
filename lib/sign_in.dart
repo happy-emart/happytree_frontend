@@ -70,7 +70,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
 
       final payload = utf8.decode(base64Url.decode(jwtParts[1]));
       print(payload);
-      storeJwtToken(response.body);
+
     }
     else
     {
@@ -124,8 +124,5 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     );
   }
 
-  Future<void> storeJwtToken(String token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('jwtToken', token);
-  }
+
 }
