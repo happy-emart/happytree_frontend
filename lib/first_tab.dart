@@ -8,43 +8,6 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'dart:math' as math;
 
-// Future<void> main() async {
-//   // final settings = ConnectionSettings(
-//   //   host: 'localhost',
-//   //   port: 3306,
-//   //   user: 'user',
-//   //   password: 'factory',
-//   //   db: 'factory_db',
-//   // );
-
-//   // final conn = await MySqlConnection.connect(settings);
-
-//   // final result = await conn.query('SELECT * FROM post');
-//   // for (var row in result) {
-//   //   print(row.fields);
-//   // }
-//   // dbConnector();
-//   final response = await fetchPost();
-//   print(response.body);
-//   // final response = await testHttpPost();
-//   // print(response.body);
-
-//   runApp(const MyApp());
-// }
-
-// void main() => runApp(LocalApp());
-
-// class LocalApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       title: "Our Happy Tree",
-//       home: TabBarDemo(),
-//     );
-//   }
-// }
-
-
 class FirstPage extends StatefulWidget {
   @override
   _FirstState createState() => _FirstState();
@@ -63,13 +26,11 @@ class _FirstState extends State<FirstPage> {
   @override
   void initState()
   {
-    super.initState();
     fetchFruits();
   }
 
   Future<String?> getJwtToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     return prefs.getString('jwtToken');
   }
 
@@ -85,6 +46,7 @@ class _FirstState extends State<FirstPage> {
     try
     {
       final response = await http.get(request, headers: headers);
+      print('body : ');
       print(response.body);
     }
     catch(error)
