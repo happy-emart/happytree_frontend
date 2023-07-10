@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/writing_letter.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -55,6 +57,18 @@ class _FirstState extends State<FirstPage> {
     return (topPoint + math.Random().nextDouble()*(endPoint-startPoint), startPoint + math.Random().nextDouble()*(endPoint-startPoint));
   }
 
+  Future<List<User>> getUsersList() async {
+    // final request = Uri.parse("http://localhost:8080/users");
+    // var response = await http.get(request);
+    // var json = jsonDecode(response.body);
+    var json = jsonDecode('[{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"},{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"},{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"},{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"}]');
+    List<User> users = [];
+    for (var userJson in json) {
+      users.add(User.fromJson(userJson));
+    }
+    return users;
+  }
+
   Future<List<int>> fetchFruits() async {
     const String Url = "http://127.0.0.1:8080/received_letters";
     final jwtToken = await getJwtToken();
@@ -63,6 +77,7 @@ class _FirstState extends State<FirstPage> {
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': 'Bearer $jwtToken'
     };
+
     try
     {
       final response = await http.get(request, headers: headers);
@@ -143,7 +158,7 @@ class _FirstState extends State<FirstPage> {
           );
   }
 
-    void FlutterDialog(BuildContext context, int id) {
+  void FlutterDialog(BuildContext context, int id) {
     showDialog(
         context: context,
         //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
@@ -193,6 +208,7 @@ class _FirstState extends State<FirstPage> {
       );
   }
 
+
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
@@ -207,52 +223,129 @@ class _FirstState extends State<FirstPage> {
       } else {
         return CircularProgressIndicator();
       }
-    },
+      },
     ),
-  Stack(
-  children: [
-  Positioned(
-  left: 0,
-  right: 0,
-  bottom: deviceHeight / 30,
-  child: Transform.scale(
-  scale: 0.5,
-  child: InkWell(
-  // splashRadius: 50,
-  child: Container(
-  child: Image.asset(
-  "assets/images/writeimg.png",
-  fit: BoxFit.cover,
-  ),
-  ),
-  onTap: () {
-              Tuple2<double, double> position= Tuple2(100.0, 100.0);
-  Navigator.push(
-  context,
-                MaterialPageRoute(builder: (context) => LetterScreen(argument: position)),
-  );
-  },
-  ),
-  ),
-  ),
-  ],
-  ),
-  const Text(
-  'Search',
-  style: optionStyle,
-  ),
-  const Text(
-  'Profile',
-  style: optionStyle,
-  ),
+    Stack(
+      children: [
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: deviceHeight / 30,
+          child: Transform.scale(
+            scale: 0.5,
+            child: InkWell(
+              child: Container(
+                child: Image.asset(
+                  "assets/images/writeimg.png",
+                  fit: BoxFit.cover,
+                ),
+              ),
+              onTap: () {
+                Tuple2<double, double> position= Tuple2(100.0, 100.0);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LetterScreen(argument: position)),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    ),
+    SingleChildScrollView(
+      child: AnimationLimiter(
+        child: Column(
+          children: AnimationConfiguration.toStaggeredList(
+            duration: const Duration(milliseconds: 500),
+            childAnimationBuilder: (widget) => SlideAnimation(
+              horizontalOffset: 100.0,
+              child: FadeInAnimation(
+                child: widget,
+              ),
+            ),
+            children: [
+              userGridData(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: const [
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 4"),
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 5"),
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 6"),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: const [
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 7"),
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 8"),
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 9"),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+    FutureBuilder<List<User>>(
+      future: getUsersList(),
+      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+        if (snapshot.hasData) {
+          List<User> users = snapshot.data!;
+          List<List<User>> userChunks = splitListIntoChunks(users, 3);
+
+          return SingleChildScrollView(
+            child: AnimationLimiter(
+              child: Column(
+                children: AnimationConfiguration.toStaggeredList(
+                    duration: const Duration(milliseconds: 500),
+                    childAnimationBuilder: (widget) => SlideAnimation(
+                      horizontalOffset: 100.0,
+                      child: FadeInAnimation(
+                        child: widget,
+                      ),
+                    ),
+                    children: userChunks.map((userChunk) {
+                      return Row(
+                        children: userChunk.map((user) {
+                          return Expanded(
+                            child: ImageThumbnail(
+                              image: "assets/images/apple.png",
+                              name: user.username,
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    }).toList(),
+                    ),
+            ),
+          )
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    ),
   ];
+
+  Row userGridData() {
+    return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                ImageThumbnail(image: "assets/images/apple.png", name: "Album 1"),
+                ImageThumbnail(image: "assets/images/apple.png", name: "Album 2"),
+                ImageThumbnail(image: "assets/images/apple.png", name: "Album 3"),
+              ],
+            );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
         children:[
           Image.asset(
-            "assets/images/universe2.png",
+            "assets/images/universe3.png",
             height: deviceHeight,
             width: deviceWidth,
             fit: BoxFit.cover,
@@ -271,7 +364,6 @@ class _FirstState extends State<FirstPage> {
                   centerHeight = constraints.maxHeight;
                   centerWidth = constraints.maxWidth;
                   // print("deviceHeight: $deviceHeight, deviceWidth: $deviceWidth, centerHeight: $centerHeight, centerWidth: $centerWidth");
-
                   return Center(
                     child: _widgetOptions.elementAt(_selectedIndex),
                   );
@@ -339,4 +431,74 @@ void startFirstPage(BuildContext context) {
     context,
     MaterialPageRoute(builder: (context) => const FirstPage()),
   );
+}
+
+
+class ImageThumbnail extends StatelessWidget {
+  const ImageThumbnail({Key? key, required this.image, required this.name})
+      : super(key: key);
+  final String image;
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 120.0,
+          height: 120.0,
+          margin: const EdgeInsets.only(bottom: 6),
+          // decoration: BoxDecoration(
+          //   image: DecorationImage(fit: BoxFit.fill, image: AssetImage(image)),
+          //   borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+          child: IconButton( 
+            icon: Transform.scale(
+              scale: 1.5,
+              child: Image.asset(
+                "assets/images/apple.png",
+                fit: BoxFit.cover,
+              ),
+            ),
+            iconSize: 30,
+            onPressed: () {
+              print("언제자냐");
+            },
+          ),
+        ),
+        Container(
+          color: Colors.black87,
+          alignment: Alignment.center,
+          child:
+            Text(name, style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white))),
+        const SizedBox(height: 20)
+      ],
+    );
+  }
+}
+
+class User {
+  final int id;
+  final String email;
+  final String password;
+  final String username;
+
+  User({required this.id, required this.email, required this.password, required this.username});
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      email: json['email'],
+      password: json['password'],
+      username: json['username'],
+    );
+  }
+}
+
+List<List<T>> splitListIntoChunks<T>(List<T> list, int chunkSize) {
+  List<List<T>> chunks = [];
+  for (var i = 0; i < list.length; i += chunkSize) {
+    chunks.add(list.sublist(i, i + chunkSize > list.length ? list.length : i + chunkSize));
+  }
+  return chunks;
 }
