@@ -15,7 +15,7 @@ class LetterScreen extends StatefulWidget {
 }
 
 class _LetterScreenState extends State<LetterScreen> {
-  TextEditingController _letterController = TextEditingController();
+  final TextEditingController _letterController = TextEditingController();
 
   late double deviceWidth = MediaQuery.of(context).size.width;  // 화면의 가로 크기
   late double deviceHeight = MediaQuery.of(context).size.height; // 화면의 세로 크기
@@ -54,7 +54,7 @@ class _LetterScreenState extends State<LetterScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Write a Letter'),
+        title: const Text('Write a Letter'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -68,7 +68,7 @@ class _LetterScreenState extends State<LetterScreen> {
                       TextField(
                         controller: _letterController,
                         maxLines: null, // Allows the TextField to expand vertically as needed
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Write your letter here...',
                           border: OutlineInputBorder(),
                         ),
@@ -77,7 +77,7 @@ class _LetterScreenState extends State<LetterScreen> {
                   ),
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 // Handle letter submission
@@ -102,7 +102,7 @@ class _LetterScreenState extends State<LetterScreen> {
                 // 작성을 완료했습니다 토스트 띄우기
                 Navigator.pop(context);
               },
-              child: Text('Submit'),
+              child: const Text('Submit'),
             ),
           ],
         ),

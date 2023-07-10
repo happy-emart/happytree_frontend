@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInApp extends StatelessWidget {
+  const SignInApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -12,20 +13,22 @@ class SignInApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SignInScreen(),
+      home: const SignInScreen(),
     );
   }
 }
 
 class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
+
   @override
   _SignInScreenState createState() => _SignInScreenState();
 }
 
 class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMixin{
-  TextEditingController _idController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
 
 // initState 무엇을 위해?
   @override
@@ -42,7 +45,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
   }
 
   void _login() async {
-    final String Url = "http://127.0.0.1:8080/signup";
+    const String Url = "http://127.0.0.1:8080/signup";
     final request = Uri.parse(Url);
     var headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -57,7 +60,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
       'username': username,
     };
 
-    var response;
+    http.Response response;
 
     response = await http.post(request, headers: headers, body: json.encode(body));
     print("response printed!!");
@@ -87,37 +90,37 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
         children: [
           TextField(
             controller: _idController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Email',
             ),
           ),
           TextField(
             controller: _passwordController,
             obscureText: true,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Password',
             ),
           ),
           TextField(
             controller: _usernameController,
             obscureText: true,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Username',
             ),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {
               _login();
             },
-            child: Text('Sign Up!'),
+            child: const Text('Sign Up!'),
           ),
         ],
       ),
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text('Log-In Page'),
+        title: const Text('Log-In Page'),
       ),
       body:
       padding2,

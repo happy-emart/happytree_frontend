@@ -1,13 +1,8 @@
-import 'dart:core';import 'dart:core';
+import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/writing_letter.dart';
 import 'package:http/http.dart' as http;
-import 'package:mysql_client/mysql_client.dart';
-import 'dart:io';
-import 'package:mysql1/mysql1.dart';
-import 'package:tuple/tuple.dart';
-import 'post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
@@ -51,6 +46,8 @@ import 'dart:math' as math;
 
 
 class FirstPage extends StatefulWidget {
+  const FirstPage({super.key});
+
   @override
   _FirstState createState() => _FirstState();
 }
@@ -90,7 +87,7 @@ class _FirstState extends State<FirstPage> {
   }
 
   void fetchFruits() async {
-    final String Url = "http://127.0.0.1:8080/received_letters";
+    const String Url = "http://127.0.0.1:8080/received_letters";
     final jwtToken = await getJwtToken();
     print('Bearer $jwtToken');
     final request = Uri.parse(Url);
@@ -125,7 +122,7 @@ class _FirstState extends State<FirstPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage('assets/images/tree.png'),
                               fit: BoxFit.fill,
@@ -184,9 +181,9 @@ class _FirstState extends State<FirstPage> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
             //Dialog Main Title
-            title: Column(
+            title: const Column(
               children: <Widget>[
-                new Text("편지의 제목"),
+                Text("편지의 제목"),
               ],
             ),
             // title: Text("편지"),
@@ -199,7 +196,7 @@ class _FirstState extends State<FirstPage> {
                   children: <Widget>[
                     Text(
                       '$id번째 사과를 눌렀더니 플러터를 사용해서 어플리케이션을 제작하는 영욱이가 긴 글을 그래도 겉보기에 괜찮아 보이도록 만드려는 노력 끝에 이런 의미 없는 문장들을 나열하기로 결정했어요. 이 문장은 여러분, 대단하게도 아무 의미가 없습니다. 그저 긴 글을 어느 정도의 수준으로 보여줄 지가 궁금했을 뿐입니다. 그런데 생각보다 쓸모가 없더라도 긴 글을 타이핑 하는 것은 쉬운 일이 아니군요. 저는 여태까지 많은 이들에게 편지를 써 왔는데요, 그 편지를 받는 이들은 같은 내용을 카카오톡을 통해 전달 받더라도 분명히 감사해야 합니다. 그렇게 쓰는 것도 분명 쉬운 일이 아니기 때문이죠. 저희 조는 수지 덕분에 꽤나 많은 정보를 갖고 시작했습니다. 수지는 엄청나게 많은 것을 알고 있습니다. 머릿속이 마치 도라에몽의 주머니 같달까요. 이럴 땐 그 결과를 부러워하기 보다는, 그가 그런 결과를 이뤄내기 위해 얼마나 많은 노력을 했을지에 대해 생각하며 스스로를 돌아봐야 합니다. 이 문장은 여러분, 대단하게도 아무 의미가 없습니다. 그저 긴 글을 어느 정도의 수준으로 보여줄 지가 궁금했을 뿐입니다. 그런데 생각보다 쓸모가 없더라도 긴 글을 타이핑 하는 것은 쉬운 일이 아니군요. 저는 여태까지 많은 이들에게 편지를 써 왔는데요, 그 편지를 받는 이들은 같은 내용을 카카오톡을 통해 전달 받더라도 분명히 감사해야 합니다. 그렇게 쓰는 것도 분명 쉬운 일이 아니기 때문이죠. 저희 조는 수지 덕분에 꽤나 많은 정보를 갖고 시작했습니다. 수지는 엄청나게 많은 것을 알고 있습니다. 머릿속이 마치 도라에몽의 주머니 같달까요. 이럴 땐 그 결과를 부러워하기 보다는, 그가 그런 결과를 이뤄내기 위해 얼마나 많은 노력을 했을지에 대해 생각하며 스스로를 돌아봐야 합니다.',
-                      style: TextStyle(fontSize: 16.0),
+                      style: const TextStyle(fontSize: 16.0),
                     ),
                     // getLetterById.getContents(),
                   ],
@@ -211,7 +208,7 @@ class _FirstState extends State<FirstPage> {
                 alignment: Alignment.center,
                 child: TextButton(
                   // alignment: Alignme
-                  child: new Text("잘 읽었어요"),
+                  child: const Text("잘 읽었어요"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -228,7 +225,8 @@ class _FirstState extends State<FirstPage> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
 
 
-  late List<Widget> _widgetOptions = <Widget>[
+  late final List<Widget> _widgetOptions = <Widget>[
+    buildTree(centerWidth, centerWidth, context, fruits),
     Stack(
       children:[
       buildTree(centerWidth, centerWidth, context, fruits),
@@ -258,11 +256,11 @@ class _FirstState extends State<FirstPage> {
       ),
       ],
     ),
-    Text(
+    const Text(
       'Search',
       style: optionStyle,
     ),
-    Text(
+    const Text(
       'Profile',
       style: optionStyle,
     ),
@@ -313,16 +311,16 @@ class _FirstState extends State<FirstPage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
               child: GNav(
-                rippleColor: const Color.fromARGB(255, 0, 0, 0)!,
-                hoverColor: const Color.fromARGB(255, 96, 69, 69)!,
+                rippleColor: const Color.fromARGB(255, 0, 0, 0),
+                hoverColor: const Color.fromARGB(255, 96, 69, 69),
                 gap: 8,
-                activeColor: Color.fromARGB(255, 0, 0, 0),
+                activeColor: const Color.fromARGB(255, 0, 0, 0),
                 iconSize: 24,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                duration: Duration(milliseconds: 400),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                duration: const Duration(milliseconds: 400),
                 tabBackgroundColor: Colors.grey[100]!,
                 color: const Color.fromARGB(255, 255, 255, 255),
-                tabs: [
+                tabs: const [
                   GButton(
                     icon: LineIcons.home,
                     text: 'Home',
@@ -358,6 +356,6 @@ class _FirstState extends State<FirstPage> {
 void startFirstPage(BuildContext context) {
   Navigator.pushReplacement(
     context,
-    MaterialPageRoute(builder: (context) => FirstPage()),
+    MaterialPageRoute(builder: (context) => const FirstPage()),
   );
 }
