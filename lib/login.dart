@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/first_tab.dart';
+import 'package:flutter_application_1/justsample.dart';
 import 'package:http/http.dart' as http;
 import 'package:mysql1/mysql1.dart';
 import 'dart:convert';
@@ -66,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       final payload = utf8.decode(base64Url.decode(jwtParts[1]));
       storeJwtToken(response.body);
 
-      Navigator.push(context, MaterialPageRoute(builder: (context) => LocalApp()));
+      startFirstPage(context);
     }
     else
     {
