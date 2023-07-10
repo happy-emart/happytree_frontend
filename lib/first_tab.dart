@@ -26,8 +26,8 @@ class _FirstState extends State<FirstPage> {
   late double poleHeight = deviceWidth*0.13;
   double imgSize = 48; // 1:1 image
 
-  late final topPoint = (centerHeight - deviceWidth)*0.5 - imgSize; // img size = 48
-  late final bottomPoint = topPoint + deviceWidth - poleHeight + imgSize; // img size = 48
+  late final topPoint = (centerHeight - deviceWidth)*0.5; // img size = 48
+  late final bottomPoint = topPoint + deviceWidth - poleHeight - imgSize; // img size = 48
   late final startPoint = 0.0;
   late final endPoint = startPoint + deviceWidth - imgSize; // img size = 48
   List<int> fruits = [];
@@ -53,7 +53,6 @@ class _FirstState extends State<FirstPage> {
   Future<List<Container>> fetchFruits() async {
     const String Url = "http://127.0.0.1:8080/received_letters";
     final jwtToken = await getJwtToken();
-    print('Bearer $jwtToken');
     final request = Uri.parse(Url);
     final headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -136,7 +135,6 @@ class _FirstState extends State<FirstPage> {
                     ),
                     iconSize: 30,
                     onPressed: () {
-                      print("사과를 누르지 마세요.");
                       FlutterDialog(context, id);
                     },
                   ),
@@ -254,7 +252,6 @@ class _FirstState extends State<FirstPage> {
   ),
   ),
   onTap: () {
-  print("이 버튼은 절대 누르지 마세요.");
               Tuple2<double, double> position= Tuple2(100.0, 100.0);
   Navigator.push(
   context,
@@ -299,7 +296,7 @@ class _FirstState extends State<FirstPage> {
                 builder: (context, constraints) {
                   centerHeight = constraints.maxHeight;
                   centerWidth = constraints.maxWidth;
-                  print("deviceHeight: $deviceHeight, deviceWidth: $deviceWidth, centerHeight: $centerHeight, centerWidth: $centerWidth");
+                  // print("deviceHeight: $deviceHeight, deviceWidth: $deviceWidth, centerHeight: $centerHeight, centerWidth: $centerWidth");
 
                   return Center(
                     child: _widgetOptions.elementAt(_selectedIndex),
