@@ -61,7 +61,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       'email': id,
       'password': password,
     };
-      startFirstPage(context);
 
     http.Response response;
 
@@ -73,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       // final payload = utf8.decode(base64Url.decode(jwtParts[1]));
       // storeJwtToken(response.body);
 
-      // startFirstPage(context);
+      startFirstPage(context);
     }
     else
     {
