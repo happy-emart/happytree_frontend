@@ -43,9 +43,7 @@ class _FirstState extends State<FirstPage> {
   }
 
   Future<List<User>> getUsersList() async {
-
     final request = Uri.parse("$baseUrl/users");
-
     final jwtToken = await getJwtToken();
     final headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -62,7 +60,6 @@ class _FirstState extends State<FirstPage> {
   }
   
   Future<List<Container>> fetchFruits() async {
-
     final String Url = "$baseUrl/received_letters";
     final jwtToken = await getJwtToken();
     final request = Uri.parse(Url);
@@ -94,7 +91,6 @@ class _FirstState extends State<FirstPage> {
   }
 
   Future<Tuple2<List<Container>,List<Letter>>> othersFruits(int id) async {
-
     final String Url = "$baseUrl/received_letters?id=$id";
     var jwtToken = await getJwtToken();
     var request = Uri.parse(Url);
@@ -129,63 +125,53 @@ class _FirstState extends State<FirstPage> {
     List<Container> fruits = await fetchFruits();
     String userName = await getUserName();
     return Stack(
-            children: [
-              mars2(),
-              settingTree(cntrWidth),
-              for(var fruit in fruits)
-                fruit,
-              Stack(
-                children: [
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: deviceHeight / 25,
-                    child: Transform.scale(
-                      scale: 0.73,
-                      child: Center(
-                        child: InkWell(
-                          onTap: () {
-                            Fluttertoast.showToast(
-                              msg: "오늘은 얼마나 편지가 왔을까~",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              backgroundColor: Colors.grey[300],
-                              textColor: Colors.black,
-                              fontSize: 16.0,
-                            );
-                          },
-                          child: Transform.scale(
-                            scale: 1,
-                            child: Image.asset(
-                              "assets/images/namesign.png",
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: deviceHeight / 11.4,
-                    child: Center(
-                      child: Text(
-                        userName,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontFamily: "mainfont",
-                          fontSize: 40.0,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+      children: [
+        mars2(),
+        settingTree(cntrWidth),
+        for(var fruit in fruits)
+          fruit,
+        Stack(
+          children: [
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: deviceHeight / 25,
+              child: InkWell(
+                onTap: () {
+                  Fluttertoast.showToast(
+                    msg: "오늘은 얼마나 편지가 왔을까~",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.grey[300],
+                    textColor: Colors.black,
+                    fontSize: 16.0,
+                  );
+                },
+                child: Image.asset(
+                  "assets/images/namesign.png",
+                  fit: BoxFit.contain,
+                ),
               ),
-            ],
-          );
+            ),
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  userName,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: "mainfont.ttf",
+                    fontSize: 40.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   Container settingTree(double cntrWidth) {
@@ -283,7 +269,6 @@ class _FirstState extends State<FirstPage> {
 
 
   Future<String> getSenderById(int id) async{
-
     final String Url = '$baseUrl/user?id=$id';
     final jwtToken = await getJwtToken();
     final request = Uri.parse(Url);
@@ -350,7 +335,6 @@ class _FirstState extends State<FirstPage> {
     void FlutterDialog(BuildContext context, int id) async {
       try
       {
-
         final String Url = "$baseUrl/letter?id=$id";
         final jwtToken = await getJwtToken();
         final request = Uri.parse(Url);

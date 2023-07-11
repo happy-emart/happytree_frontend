@@ -6,6 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+String baseUrl = baseUrl;
+
+
 // deviceWidth, deviceHeight, centerHeight, imgSize
 
 class LetterScreen extends StatefulWidget {

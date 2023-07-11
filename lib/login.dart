@@ -48,7 +48,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   }
 
   void _login() async {
-
     final String Url = "$baseUrl/auth";
     final request = Uri.parse(Url);
     var headers = <String, String> {
