@@ -10,9 +10,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:tuple/tuple.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 String backgroundImagePath = "assets/images/universe5.jpg";
-String surfaceImagePath = "assets/images/mars1.png";
+String baseUrl = "http://168.131.151.213:4040";
 
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});
@@ -42,7 +43,7 @@ class _FirstState extends State<FirstPage> {
   }
 
   Future<List<User>> getUsersList() async {
-    final request = Uri.parse("http://localhost:8080/users");
+    final request = Uri.parse("$baseUrl/users");
 
     final jwtToken = await getJwtToken();
     final headers = <String, String> {
@@ -60,7 +61,7 @@ class _FirstState extends State<FirstPage> {
   }
   
   Future<List<Container>> fetchFruits() async {
-    const String Url = "http://127.0.0.1:8080/received_letters";
+    final String Url = "$baseUrl/received_letters";
     final jwtToken = await getJwtToken();
     final request = Uri.parse(Url);
     final headers = <String, String> {
@@ -91,7 +92,7 @@ class _FirstState extends State<FirstPage> {
   }
 
   Future<Tuple2<List<Container>,List<Letter>>> othersFruits(int id) async {
-    String Url = "http://127.0.0.1:8080/received_letters?id=$id";
+    final String Url = "$baseUrl/received_letters?id=$id";
     var jwtToken = await getJwtToken();
     var request = Uri.parse(Url);
     var headers = <String, String> {
@@ -123,14 +124,64 @@ class _FirstState extends State<FirstPage> {
 
   Future<Stack> buildTree(double cntrHeight, double cntrWidth, BuildContext context) async {
     List<Container> fruits = await fetchFruits();
+    String userName = await getUserName();
     return Stack(
             children: [
               mars2(),
               settingTree(cntrWidth),
               for(var fruit in fruits)
                 fruit,
-              ],
-              // buildImageStack(5),
+              Stack(
+                children: [
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: deviceHeight / 25,
+                    child: Transform.scale(
+                      scale: 0.73,
+                      child: Center(
+                        child: InkWell(
+                          onTap: () {
+                            Fluttertoast.showToast(
+                              msg: "오늘은 얼마나 편지가 왔을까~",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              backgroundColor: Colors.grey[300],
+                              textColor: Colors.black,
+                              fontSize: 16.0,
+                            );
+                          },
+                          child: Transform.scale(
+                            scale: 1,
+                            child: Image.asset(
+                              "assets/images/namesign.png",
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: deviceHeight / 11.4,
+                    child: Center(
+                      child: Text(
+                        userName,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontFamily: "mainfont",
+                          fontSize: 40.0,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           );
   }
 
@@ -229,7 +280,7 @@ class _FirstState extends State<FirstPage> {
 
 
   Future<String> getSenderById(int id) async{
-    final String Url = 'http://127.0.0.1:8080/user?id=$id';
+    final String Url = '$baseUrl/user?id=$id';
     final jwtToken = await getJwtToken();
     final request = Uri.parse(Url);
     final headers = <String, String> {
@@ -240,6 +291,25 @@ class _FirstState extends State<FirstPage> {
       final response = await http.get(request, headers: headers);
       return response.body;
 
+    }
+    catch(error)
+    {
+      print('$error');
+    }
+    return "";
+  }
+
+  Future<String> getUserName() async{
+    final String Url = "$baseUrl/user";
+    final jwtToken = await getJwtToken();
+    final request = Uri.parse(Url);
+    final headers = <String, String> {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $jwtToken'
+    };
+    try {
+      final response = await http.get(request, headers: headers);
+      return response.body;
     }
     catch(error)
     {
@@ -276,7 +346,7 @@ class _FirstState extends State<FirstPage> {
     void FlutterDialog(BuildContext context, int id) async {
       try
       {
-        final String Url = "http://127.0.0.1:8080/letter?id=$id";
+        final String Url = "$baseUrl/letter?id=$id";
         final jwtToken = await getJwtToken();
         final request = Uri.parse(Url);
         final headers = <String, String> {
@@ -458,14 +528,9 @@ class _FirstState extends State<FirstPage> {
                   // Your future has completed. Extract the data you need from the snapshot
                   List<Letter> letters = snapshot.data?.item2 ?? [];
                   return InkWell(
-                    child: Positioned(
-                      top: 60,
-                      left: 0,
-                      right: 0,
-                      child: Image.asset(
-                        "assets/images/writeimg.png",
-                        fit: BoxFit.cover,
-                      ),
+                    child: Image.asset(
+                      "assets/images/writeimg.png",
+                      fit: BoxFit.cover,
                     ),
                     onTap: () {
                       Navigator.push(

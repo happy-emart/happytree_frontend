@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'main.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -68,8 +69,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     response = await http.post(request, headers: headers, body: json.encode(body));
     if(response.statusCode == 200)
     {
-      storeJwtToken(response.body);
-      startFirstPage(context);
+      returnToMain(context);
     }
     else
     {
@@ -98,8 +98,8 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             ),
           ),
           TextField(
+            maxLength: 12,
             controller: _usernameController,
-            obscureText: true,
             decoration: const InputDecoration(
               labelText: 'Username',
             ),
