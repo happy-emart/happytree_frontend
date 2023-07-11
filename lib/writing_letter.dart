@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 // deviceWidth, deviceHeight, centerHeight, imgSize
 
@@ -162,7 +163,7 @@ class sendigButton extends StatelessWidget {
           // 'img Type'
         };
         print(body);
-        // sendLetter(body);
+        sendLetter(body);
         // 작성을 완료했습니다 토스트 띄우기
         Navigator.pop(context);
       },
@@ -181,7 +182,7 @@ void sendLetter(Map<String, dynamic> body) async {
   };
   try
     {
-      final response = await http.post(request, headers: headers);
+      final response = await http.post(request, headers: headers, body: json.encode(body));
       print(response.body);
     }
     catch(error)

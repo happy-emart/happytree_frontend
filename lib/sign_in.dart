@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'first_tab.dart';
 
 class SignInApp extends StatelessWidget {
   const SignInApp({super.key});
@@ -44,7 +47,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     super.dispose();
   }
 
-  void _login() async {
+  void _signup() async {
     const String Url = "http://127.0.0.1:8080/signup";
     final request = Uri.parse(Url);
     var headers = <String, String> {
@@ -63,17 +66,10 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     http.Response response;
 
     response = await http.post(request, headers: headers, body: json.encode(body));
-    print("response printed!!");
-    print(response);
     if(response.statusCode == 200)
     {
-      print("request sunggonged");
-      print(response.body);
-      final jwtParts = response.body.split('.');
-
-      final payload = utf8.decode(base64Url.decode(jwtParts[1]));
-      print(payload);
-
+      storeJwtToken(response.body);
+      startFirstPage(context);
     }
     else
     {
@@ -111,7 +107,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
           const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {
-              _login();
+              _signup();
             },
             child: const Text('Sign Up!'),
           ),
@@ -127,5 +123,8 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     );
   }
 
-
+  Future<void> storeJwtToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('jwtToken', token);
+  }
 }

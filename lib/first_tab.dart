@@ -325,16 +325,15 @@ class _FirstState extends State<FirstPage> {
 
   FutureBuilder<List<User>> getOthersTreeView() {
     return FutureBuilder<List<User>>(
-    future: getUsersList(),
-    builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
-      if (snapshot.hasData) {
-        print("Two tab emerge");
-        List<User> users = snapshot.data!;
-        List<List<User>> userChunks = splitListIntoChunks(users, 3);
-        return SingleChildScrollView(
-          child: AnimationLimiter(
-            child: Column(
-              children: AnimationConfiguration.toStaggeredList(
+      future: getUsersList(),
+      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+        if (snapshot.hasData) {
+          List<User> users = snapshot.data!;
+          List<List<User>> userChunks = splitListIntoChunks(users, 3);
+          return SingleChildScrollView(
+            child: AnimationLimiter(
+              child: Column(
+                children: AnimationConfiguration.toStaggeredList(
                   duration: const Duration(milliseconds: 500),
                   childAnimationBuilder: (widget) => SlideAnimation(
                     horizontalOffset: 100.0,
@@ -350,24 +349,25 @@ class _FirstState extends State<FirstPage> {
                             image: "assets/images/apple.png",
                             name: user.username,
                             id: user.id,
-                            func: openOthersTreePage,
+                            func: () => openOthersTreePage(context, user.id),
                           ),
                         );
                       }).toList(),
                     );
                   }).toList(),
-                  ),
-          ),
-        )
-      );
-      } else if (snapshot.hasError) {
-        return Text('Error: ${snapshot.error}');
-      } else {
-        return const CircularProgressIndicator();
-      }
-    },
-  );
+                ),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
   }
+
 
   void openOthersTreePage(BuildContext context, int othersId) {
     Navigator.push(
@@ -392,44 +392,6 @@ class _FirstState extends State<FirstPage> {
       )
     );
   }
-
-  // Stack buildOthersTreePage(int othersId) {
-  //     while(true) {
-  //       var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
-  //       if (!isNotValidLetterPos([], x, y)) {
-  //         // containers.add(createFruit(context, x, y, fruit));
-  //         break;
-  //       } 
-  //     }
-  //   Tuple2<double, double> position= Tuple2(100.0, 100.0);
-  //   return Stack(
-  //     children: [
-  //       Positioned(
-  //         left: 0,
-  //         right: 0,
-  //         bottom: deviceHeight / 30,
-  //         child: Transform.scale(
-  //           scale: 0.5,
-  //           child: InkWell(
-  //             child: Container(
-  //               child: Image.asset(
-  //                 "assets/images/writeimg.png",
-  //                 fit: BoxFit.cover,
-  //               ),
-  //             ),
-  //             onTap: () {
-  //               Navigator.push(
-  //                 context,
-  //                 MaterialPageRoute(builder: (context) => LetterScreen(argument: position, id: 1,)),
-  //               );
-  //             },
-  //           ),
-  //         ),
-  //       ),
-  //     buildTreeById(othersId),
-  //   ],
-  // );
-  // }
 
   Stack buildOthersTreePage(int othersId) {
     return Stack(
@@ -623,7 +585,7 @@ class ImageThumbnail extends StatelessWidget {
             ),
             iconSize: 30,
             onPressed: () {
-              func(context, id);
+              func();
             },
           ),
         ),
