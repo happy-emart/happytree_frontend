@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/sign_in.dart';
+import 'kakao_login.dart';
 import 'login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -49,7 +50,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
             ),
             ElevatedButton(
               onPressed: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => const KakaoApp()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const KakaoApp()));
               },
               child: const Text('Login with Kakaotalk'),
             ),
