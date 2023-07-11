@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   }
 
   void _login() async {
-    const String Url = "http://127.0.0.1:8080/auth";
+    const String Url = "http://168.131.151.213:4040/auth";
     final request = Uri.parse(Url);
     var headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -69,7 +69,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     }
     else
     {
-      print('Request failed with status: ${response.statusCode}');
+      final error = json.decode(response.body);
+      print('Request failed with status: $error');
     }
   }
 

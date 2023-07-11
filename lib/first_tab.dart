@@ -39,7 +39,7 @@ class _FirstState extends State<FirstPage> {
   }
 
   Future<List<User>> getUsersList() async {
-    final request = Uri.parse("http://localhost:8080/users");
+    final request = Uri.parse("http://168.131.151.213:4040/users");
 
     final jwtToken = await getJwtToken();
     final headers = <String, String> {
@@ -57,7 +57,7 @@ class _FirstState extends State<FirstPage> {
   }
   
   Future<List<Container>> fetchFruits() async {
-    const String Url = "http://127.0.0.1:8080/received_letters";
+    const String Url = "http://168.131.151.213:4040/received_letters";
     final jwtToken = await getJwtToken();
     final request = Uri.parse(Url);
     final headers = <String, String> {
@@ -88,7 +88,7 @@ class _FirstState extends State<FirstPage> {
   }
 
   Future<Tuple2<List<Container>,List<Letter>>> othersFruits(int id) async {
-    String Url = "http://127.0.0.1:8080/received_letters?id=$id";
+    String Url = "http://168.131.151.213:4040/received_letters?id=$id";
     var jwtToken = await getJwtToken();
     var request = Uri.parse(Url);
     var headers = <String, String> {
@@ -185,7 +185,7 @@ class _FirstState extends State<FirstPage> {
 
 
   Future<String> getSenderById(int id) async{
-    final String Url = 'http://127.0.0.1:8080/user?id=$id';
+    final String Url = 'http://168.131.151.213:4040/user?id=$id';
     final jwtToken = await getJwtToken();
     final request = Uri.parse(Url);
     final headers = <String, String> {
@@ -232,7 +232,7 @@ class _FirstState extends State<FirstPage> {
     void FlutterDialog(BuildContext context, int id) async {
       try
       {
-        final String Url = "http://127.0.0.1:8080/letter?id=$id";
+        final String Url = "http://168.131.151.213:4040/letter?id=$id";
         final jwtToken = await getJwtToken();
         final request = Uri.parse(Url);
         final headers = <String, String> {
