@@ -52,12 +52,18 @@ class _FirstState extends State<FirstPage> {
   }
 
   Future<List<User>> getUsersList() async {
-    // final request = Uri.parse("http://localhost:8080/users");
-    // var response = await http.get(request);
-    // var json = jsonDecode(response.body);
-    var json = jsonDecode('[{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"},{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"},{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"},{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"}]');
+    final request = Uri.parse("http://localhost:8080/users");
+    final jwtToken = await getJwtToken();
+    final headers = <String, String> {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $jwtToken'
+    };
+    var response = await http.get(request, headers: headers);
+    var json = jsonDecode(response.body);
+    print(json);
     List<User> users = [];
     for (var userJson in json) {
+      print(userJson);
       users.add(User.fromJson(userJson));
     }
     return users;
@@ -317,81 +323,54 @@ class _FirstState extends State<FirstPage> {
               ),
             ),
             children: [
-              userGridData(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 4"),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 5"),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 6"),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 7"),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 8"),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 9"),
-                ],
+              FutureBuilder<List<User>>(
+                future: getUsersList(),
+                builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+                  if (snapshot.hasData) {
+                    List<User> users = snapshot.data!;
+                    List<List<User>> userChunks = splitListIntoChunks(users, 3);
+
+                    return SingleChildScrollView(
+                        child: AnimationLimiter(
+                          child: Column(
+                            children: AnimationConfiguration.toStaggeredList(
+                              duration: const Duration(milliseconds: 500),
+                              childAnimationBuilder: (widget) => SlideAnimation(
+                                horizontalOffset: 100.0,
+                                child: FadeInAnimation(
+                                  child: widget,
+                                ),
+                              ),
+                              children: userChunks.map((userChunk) {
+                                return Row(
+                                  children: userChunk.map((user) {
+                                    return Expanded(
+                                      child: ImageThumbnail(
+                                        image: "assets/images/apple.png",
+                                        name: user.username,
+                                      ),
+                                    );
+                                  }).toList(),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        )
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
               ),
             ],
           ),
         ),
       ),
     ),
-    FutureBuilder<List<User>>(
-      future: getUsersList(),
-      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
-        if (snapshot.hasData) {
-          List<User> users = snapshot.data!;
-          List<List<User>> userChunks = splitListIntoChunks(users, 3);
-
-          return SingleChildScrollView(
-            child: AnimationLimiter(
-              child: Column(
-                children: AnimationConfiguration.toStaggeredList(
-                    duration: const Duration(milliseconds: 500),
-                    childAnimationBuilder: (widget) => SlideAnimation(
-                      horizontalOffset: 100.0,
-                      child: FadeInAnimation(
-                        child: widget,
-                      ),
-                    ),
-                    children: userChunks.map((userChunk) {
-                      return Row(
-                        children: userChunk.map((user) {
-                          return Expanded(
-                            child: ImageThumbnail(
-                              image: "assets/images/apple.png",
-                              name: user.username,
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    }).toList(),
-                    ),
-            ),
-          )
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
-    ),
   ];
 
-  Row userGridData() {
-    return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
-                ImageThumbnail(image: "assets/images/apple.png", name: "Album 1"),
-                ImageThumbnail(image: "assets/images/apple.png", name: "Album 2"),
-                ImageThumbnail(image: "assets/images/apple.png", name: "Album 3"),
-              ],
-            );
-  }
 
   @override
   Widget build(BuildContext context) {
