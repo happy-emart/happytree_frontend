@@ -249,7 +249,6 @@ class _FirstState extends State<FirstPage> {
   }
 
   Container createFruit(BuildContext context, double x, double y, int id) {
-    print("top: $x, right: $y");
     return Container(
             child: Positioned(
               top: x,
@@ -370,16 +369,15 @@ class _FirstState extends State<FirstPage> {
 
   FutureBuilder<List<User>> getOthersTreeView() {
     return FutureBuilder<List<User>>(
-    future: getUsersList(),
-    builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
-      if (snapshot.hasData) {
-        print("Two tab emerge");
-        List<User> users = snapshot.data!;
-        List<List<User>> userChunks = splitListIntoChunks(users, 3);
-        return SingleChildScrollView(
-          child: AnimationLimiter(
-            child: Column(
-              children: AnimationConfiguration.toStaggeredList(
+      future: getUsersList(),
+      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+        if (snapshot.hasData) {
+          List<User> users = snapshot.data!;
+          List<List<User>> userChunks = splitListIntoChunks(users, 3);
+          return SingleChildScrollView(
+            child: AnimationLimiter(
+              child: Column(
+                children: AnimationConfiguration.toStaggeredList(
                   duration: const Duration(milliseconds: 500),
                   childAnimationBuilder: (widget) => SlideAnimation(
                     horizontalOffset: 100.0,
@@ -395,24 +393,25 @@ class _FirstState extends State<FirstPage> {
                             image: "assets/images/apple.png",
                             name: user.username,
                             id: user.id,
-                            func: openOthersTreePage,
+                            func: () => openOthersTreePage(context, user.id),
                           ),
                         );
                       }).toList(),
                     );
                   }).toList(),
-                  ),
-          ),
-        )
-      );
-      } else if (snapshot.hasError) {
-        return Text('Error: ${snapshot.error}');
-      } else {
-        return const CircularProgressIndicator();
-      }
-    },
-  );
+                ),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
   }
+
 
   void openOthersTreePage(BuildContext context, int othersId) {
     Navigator.push(
@@ -633,7 +632,7 @@ class ImageThumbnail extends StatelessWidget {
             ),
             iconSize: 30,
             onPressed: () {
-              func(context, id);
+              func();
             },
           ),
         ),

@@ -62,7 +62,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     http.Response response;
 
     response = await http.post(request, headers: headers, body: json.encode(body));
-    print(response.body);
     if(response.statusCode == 200)
     {
       storeJwtToken(response.body);
