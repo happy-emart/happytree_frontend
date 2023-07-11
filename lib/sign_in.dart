@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'main.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'first_tab.dart';
+
+String baseUrl = "http://168.131.151.213:4040";
 
 class SignInApp extends StatelessWidget {
   const SignInApp({super.key});
@@ -48,7 +51,11 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
   }
 
   void _signup() async {
+<<<<<<< HEAD
     const String Url = "http://168.131.151.213:4040/signup";
+=======
+    final String Url = "$baseUrl/signup";
+>>>>>>> 0e48a6bcc126fa35c37e49720fe9ed44f4381e26
     final request = Uri.parse(Url);
     var headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -68,8 +75,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     response = await http.post(request, headers: headers, body: json.encode(body));
     if(response.statusCode == 200)
     {
-      storeJwtToken(response.body);
-      startFirstPage(context);
+      returnToMain(context);
     }
     else
     {
@@ -98,8 +104,8 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             ),
           ),
           TextField(
+            maxLength: 12,
             controller: _usernameController,
-            obscureText: true,
             decoration: const InputDecoration(
               labelText: 'Username',
             ),

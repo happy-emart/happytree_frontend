@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/sign_in.dart';
 import 'login.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() => runApp(MaterialApp(
     builder: (context, child) {
@@ -43,7 +44,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInApp()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SignInApp()));
               },
               child: const Text('Sign Up'),
             ),
@@ -64,4 +65,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
         padding1,
     );
   }
+}
+
+void returnToMain(BuildContext context) {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => MainScreen()),
+  );
 }
