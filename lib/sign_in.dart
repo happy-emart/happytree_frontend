@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'first_tab.dart';
 
+String baseUrl = "http://168.131.151.213:4040";
+
 class SignInApp extends StatelessWidget {
   const SignInApp({super.key});
 
@@ -49,7 +51,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
   }
 
   void _signup() async {
-    const String Url = "http://127.0.0.1:8080/signup";
+    final String Url = "$baseUrl/signup";
     final request = Uri.parse(Url);
     var headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',

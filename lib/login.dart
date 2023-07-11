@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+String baseUrl = "http://168.131.151.213:4040";
+
 class LoginApp extends StatelessWidget {
   const LoginApp({super.key});
 
@@ -46,8 +48,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   }
 
   void _login() async {
-    const String Url = "http://10.0.2.2:8080/auth";
-    // const String Url = "http://127.0.0.1:8080/auth";
+    final String Url = "$baseUrl/auth";
     final request = Uri.parse(Url);
     var headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
