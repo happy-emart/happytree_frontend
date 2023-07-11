@@ -154,7 +154,6 @@ class _FirstState extends State<FirstPage> {
   }
 
   Container createFruit(BuildContext context, double x, double y, int id) {
-    print("top: $x, right: $y");
     return Container(
             child: Positioned(
               top: x,
