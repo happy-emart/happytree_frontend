@@ -32,7 +32,6 @@ class _FirstState extends State<FirstPage> {
   late final startPoint = 0.0;
   late final endPoint = startPoint + deviceWidth - imgSize; // img size = 48
   List<int> fruits = [];
-  List<Container> yeolmae = [];
   List<Tuple2<double, double>> pointList = [];
 
   Future<String?> getJwtToken() async {
