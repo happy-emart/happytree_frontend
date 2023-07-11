@@ -5,7 +5,8 @@ import 'package:tuple/tuple.dart';
 
 class LetterScreen extends StatefulWidget {
   final Tuple2<double, double> argument;
-  const LetterScreen({Key? key, required this.argument}) : super(key: key);
+  final int id;
+  const LetterScreen({Key? key, required this.argument, required this.id}) : super(key: key);
   @override
   _LetterScreenState createState() => _LetterScreenState();
 }

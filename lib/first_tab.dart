@@ -51,10 +51,16 @@ class _FirstState extends State<FirstPage> {
   }
 
   Future<List<User>> getUsersList() async {
-    // final request = Uri.parse("http://localhost:8080/users");
-    // var response = await http.get(request);
-    // var json = jsonDecode(response.body);
-    var json = jsonDecode('[{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"},{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"},{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"},{"id":1,"email":"dsaf","password":"dsaf","username":"sujee"},{"id":2,"email":"dsaf","password":"dsaf","username":"yddook"},{"id":3,"email":"dsaf","password":"dsaf","username":"jaemin"},{"id":4,"email":"dsaf","password":"dsaf","username":"junseo"}]');
+    final request = Uri.parse("http://localhost:8080/users");
+
+    final jwtToken = await getJwtToken();
+    final headers = <String, String> {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    var response = await http.get(request, headers: headers);
+    var json = jsonDecode(response.body);
     List<User> users = [];
     for (var userJson in json) {
       users.add(User.fromJson(userJson));
@@ -296,7 +302,7 @@ class _FirstState extends State<FirstPage> {
                 Tuple2<double, double> position= Tuple2(100.0, 100.0);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LetterScreen(argument: position)),
+                  MaterialPageRoute(builder: (context) => LetterScreen(argument: position, id: 1,)),
                 );
               },
             ),
@@ -320,17 +326,17 @@ class _FirstState extends State<FirstPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const [
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 4"),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 5"),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 6"),
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 4", id: 4,),
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 5", id: 5,),
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 6", id: 6,),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const [
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 7"),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 8"),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 9"),
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 7", id: 7,),
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 8", id: 8),
+                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 9", id: 9,),
                 ],
               ),
             ],
@@ -363,6 +369,7 @@ class _FirstState extends State<FirstPage> {
                             child: ImageThumbnail(
                               image: "assets/images/apple.png",
                               name: user.username,
+                              id: user.id,
                             ),
                           );
                         }).toList(),
@@ -385,9 +392,9 @@ class _FirstState extends State<FirstPage> {
     return Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: const [
-                ImageThumbnail(image: "assets/images/apple.png", name: "Album 1"),
-                ImageThumbnail(image: "assets/images/apple.png", name: "Album 2"),
-                ImageThumbnail(image: "assets/images/apple.png", name: "Album 3"),
+                ImageThumbnail(image: "assets/images/apple.png", name: "Album 1", id: 1,),
+                ImageThumbnail(image: "assets/images/apple.png", name: "Album 2", id: 2,),
+                ImageThumbnail(image: "assets/images/apple.png", name: "Album 3", id: 3,),
               ],
             );
   }
@@ -487,10 +494,11 @@ void startFirstPage(BuildContext context) {
 
 
 class ImageThumbnail extends StatelessWidget {
-  const ImageThumbnail({Key? key, required this.image, required this.name})
+  const ImageThumbnail({Key? key, required this.image, required this.name, required this.id})
       : super(key: key);
   final String image;
   final String name;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
@@ -514,7 +522,7 @@ class ImageThumbnail extends StatelessWidget {
             ),
             iconSize: 30,
             onPressed: () {
-              print("언제자냐");
+              //Navigator.push(context, MaterialPageRoute(builder: (context) => LetterScreen(argument: , id: id,)));
             },
           ),
         ),
