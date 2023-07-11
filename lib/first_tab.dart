@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
-import 'dart:math' as math;
 import 'package:tuple/tuple.dart';
 
 class FirstPage extends StatefulWidget {
@@ -22,8 +21,8 @@ class FirstPage extends StatefulWidget {
 class _FirstState extends State<FirstPage> {
   late double deviceWidth = MediaQuery.of(context).size.width;  // 화면의 가로 크기
   late double deviceHeight = MediaQuery.of(context).size.height; // 화면의 세로 크기
-  late double centerHeight = 0.0;
   late double centerWidth = 0.0;
+  late double centerHeight = 0.0;
   late double poleHeight = deviceWidth*0.13;
   double imgSize = 48; // 1:1 image
 
@@ -37,17 +36,6 @@ class _FirstState extends State<FirstPage> {
   Future<String?> getJwtToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('jwtToken');
-  }
-
-  bool isNotValidLetterPos(List<String> letters, double x, double y) {
-    if ((math.pow(x-(centerWidth-imgSize)*0.5, 2) + math.pow(y-(centerWidth-imgSize-poleHeight)*0.5, 2))>=math.pow((centerWidth-poleHeight)*0.5, 2)) {
-      return true;
-    }
-    return false;
-  }
-
-  (double, double) getRandPos(double startPoint, double endPoint, double deviceWidth) {
-    return (topPoint + math.Random().nextDouble()*(endPoint-startPoint), startPoint + math.Random().nextDouble()*(endPoint-startPoint));
   }
 
   Future<List<User>> getUsersList() async {
@@ -68,17 +56,6 @@ class _FirstState extends State<FirstPage> {
     return users;
   }
   
-      // for(var fruit in fruitList) {
-
-      //   while(true) {
-      //     var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
-      //     if (!isNotValidLetterPos([], x, y)) {
-      //       containers.add(createFruit(context, x, y, fruit));
-      //       break;
-      //     }
-      //   }
-      // }
-
   Future<List<Container>> fetchFruits() async {
     const String Url = "http://127.0.0.1:8080/received_letters";
     final jwtToken = await getJwtToken();
@@ -110,7 +87,7 @@ class _FirstState extends State<FirstPage> {
     return [];
   }
 
-  Future<List<Container>> othersFruits(int id) async {
+  Future<Tuple2<List<Container>,List<Letter>>> othersFruits(int id) async {
     String Url = "http://127.0.0.1:8080/received_letters?id=$id";
     var jwtToken = await getJwtToken();
     var request = Uri.parse(Url);
@@ -126,20 +103,19 @@ class _FirstState extends State<FirstPage> {
       List<Container> containers = [];
       var json = jsonDecode(response.body);
       // print(jsonList); // checking the validity of the letters list
-      for (var LetterJson in json) {
-        letters.add(Letter.fromJson(LetterJson));
+      for (var letterJson in json) {
+        letters.add(Letter.fromJson(letterJson));
       }
-
       for(var fruit in letters) {
         containers.add(createFruit(context, fruit.posX, fruit.posY, fruit.id));
       }
-      return containers;
+      return Tuple2(containers, letters);
     }
     catch(error)
     {
       print('error : $error');
     }
-    return [];
+    return const Tuple2([], []);
   }
 
   Future<Stack> buildTree(double cntrHeight, double cntrWidth, BuildContext context) async {
@@ -176,7 +152,7 @@ class _FirstState extends State<FirstPage> {
   }
 
   Future<Stack> buildOthersTree(int id, double cntrHeight, double cntrWidth, BuildContext context) async {
-    List<Container> fruits = await othersFruits(id);
+    Tuple2<List<Container>, List<Letter>> fruits = await othersFruits(id);
     return Stack(
             children: [
               Container(
@@ -201,10 +177,9 @@ class _FirstState extends State<FirstPage> {
                   ],
                 ),
               ),
-              for(var fruit in fruits)
+              for(var fruit in fruits.item1)
                 fruit,
-              ],
-              // buildImageStack(5),
+            ],
           );
   }
 
@@ -256,7 +231,6 @@ class _FirstState extends State<FirstPage> {
   }
 
     void FlutterDialog(BuildContext context, int id) async {
-
       try
       {
         final String Url = "http://127.0.0.1:8080/letter?id=$id";
@@ -301,7 +275,7 @@ class _FirstState extends State<FirstPage> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
                             Text(
-                              '$text',
+                              text,
                               style: const TextStyle(fontSize: 16.0),
                             ),
                             // getLetterById.getContents(),
@@ -327,7 +301,7 @@ class _FirstState extends State<FirstPage> {
           }
         else
           {
-            throw HttpException("You cannot access to letter");
+            throw const HttpException("You cannot access to letter");
           }
       }
       catch(error)
@@ -345,116 +319,54 @@ class _FirstState extends State<FirstPage> {
 
   late final List<Widget> _widgetOptions = <Widget>[
     buildTreeOfMe(),
-    // buildOthersTreePage(),
-    Text("hiiiii"),
-    // SingleChildScrollView(
-    //   child: AnimationLimiter(
-    //     child: Column(
-    //       children: AnimationConfiguration.toStaggeredList(
-    //         duration: const Duration(milliseconds: 500),
-    //         childAnimationBuilder: (widget) => SlideAnimation(
-    //           horizontalOffset: 100.0,
-    //           child: FadeInAnimation(
-    //             child: widget,
-    //           ),
-    //         ),
-    //         children: [
-    //           userGridData(),
-    //           Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceAround,
-    //             children: const [
-    //               ImageThumbnail(image: "assets/images/apple.png", name: "Album 4", id: 4,),
-    //               ImageThumbnail(image: "assets/images/apple.png", name: "Album 5", id: 5,),
-    //               ImageThumbnail(image: "assets/images/apple.png", name: "Album 6", id: 6,),
-    //             ],
-    //           ),
-    //           Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceAround,
-    //             children: const [
-    //               ImageThumbnail(image: "assets/images/apple.png", name: "Album 7", id: 7,),
-    //               ImageThumbnail(image: "assets/images/apple.png", name: "Album 8", id: 8),
-    //               ImageThumbnail(image: "assets/images/apple.png", name: "Album 9", id: 9,),
-    //             ],
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   ),
-    // ),
-    Text("second hiiii"),
-    FutureBuilder<List<User>>(
-      future: getUsersList(),
-      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
-        if (snapshot.hasData) {
-          List<User> users = snapshot.data!;
-          List<List<User>> userChunks = splitListIntoChunks(users, 3);
-
-          return SingleChildScrollView(
-            child: AnimationLimiter(
-              child: Column(
-                children: AnimationConfiguration.toStaggeredList(
-                    duration: const Duration(milliseconds: 500),
-                    childAnimationBuilder: (widget) => SlideAnimation(
-                      horizontalOffset: 100.0,
-                      child: FadeInAnimation(
-                        child: widget,
-                      ),
-                    ),
-                    children: userChunks.map((userChunk) {
-                      return Row(
-                        children: userChunk.map((user) {
-                          return Expanded(
-                            child: ImageThumbnail(
-                              image: "assets/images/apple.png",
-                              name: user.username,
-                              id: user.id,
-                              func: openOthersTreePage,
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    }).toList(),
-                    ),
-            ),
-          )
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
-    ),
+    getOthersTreeView(),
+    const Text("hiiiii"),
+    const Text("second hiiii"),
   ];
 
-  Stack buildOthersTreePage(int othersId) {
-    return Stack(
-    children: [
-      Positioned(
-        left: 0,
-        right: 0,
-        bottom: deviceHeight / 30,
-        child: Transform.scale(
-          scale: 0.5,
-          child: InkWell(
-            child: Container(
-              child: Image.asset(
-                "assets/images/writeimg.png",
-                fit: BoxFit.cover,
-              ),
-            ),
-            onTap: () {
-              Tuple2<double, double> position= Tuple2(100.0, 100.0);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LetterScreen(argument: position, id: 1,)),
-              );
-            },
+  FutureBuilder<List<User>> getOthersTreeView() {
+    return FutureBuilder<List<User>>(
+    future: getUsersList(),
+    builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+      if (snapshot.hasData) {
+        print("Two tab emerge");
+        List<User> users = snapshot.data!;
+        List<List<User>> userChunks = splitListIntoChunks(users, 3);
+        return SingleChildScrollView(
+          child: AnimationLimiter(
+            child: Column(
+              children: AnimationConfiguration.toStaggeredList(
+                  duration: const Duration(milliseconds: 500),
+                  childAnimationBuilder: (widget) => SlideAnimation(
+                    horizontalOffset: 100.0,
+                    child: FadeInAnimation(
+                      child: widget,
+                    ),
+                  ),
+                  children: userChunks.map((userChunk) {
+                    return Row(
+                      children: userChunk.map((user) {
+                        return Expanded(
+                          child: ImageThumbnail(
+                            image: "assets/images/apple.png",
+                            name: user.username,
+                            id: user.id,
+                            func: openOthersTreePage,
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  }).toList(),
+                  ),
           ),
-        ),
-      ),
-    buildTreeById(othersId),
-    ],
+        )
+      );
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      } else {
+        return const CircularProgressIndicator();
+      }
+    },
   );
   }
 
@@ -482,42 +394,117 @@ class _FirstState extends State<FirstPage> {
     );
   }
 
+  // Stack buildOthersTreePage(int othersId) {
+  //     while(true) {
+  //       var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
+  //       if (!isNotValidLetterPos([], x, y)) {
+  //         // containers.add(createFruit(context, x, y, fruit));
+  //         break;
+  //       } 
+  //     }
+  //   Tuple2<double, double> position= Tuple2(100.0, 100.0);
+  //   return Stack(
+  //     children: [
+  //       Positioned(
+  //         left: 0,
+  //         right: 0,
+  //         bottom: deviceHeight / 30,
+  //         child: Transform.scale(
+  //           scale: 0.5,
+  //           child: InkWell(
+  //             child: Container(
+  //               child: Image.asset(
+  //                 "assets/images/writeimg.png",
+  //                 fit: BoxFit.cover,
+  //               ),
+  //             ),
+  //             onTap: () {
+  //               Navigator.push(
+  //                 context,
+  //                 MaterialPageRoute(builder: (context) => LetterScreen(argument: position, id: 1,)),
+  //               );
+  //             },
+  //           ),
+  //         ),
+  //       ),
+  //     buildTreeById(othersId),
+  //   ],
+  // );
+  // }
+
+  Stack buildOthersTreePage(int othersId) {
+    return Stack(
+      children: [
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: deviceHeight / 30,
+          child: Transform.scale(
+            scale: 0.5,
+            child: FutureBuilder<Tuple2<List<Container>,List<Letter>>>(
+              future: othersFruits(othersId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    // Do something with your error
+                    return const Text('Error occurred');
+                  }
+                  // Your future has completed. Extract the data you need from the snapshot
+                  List<Letter> letters = snapshot.data?.item2 ?? [];
+                  return InkWell(
+                    child: Container(
+                      child: Image.asset(
+                        "assets/images/writeimg.png",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LetterScreen(argument: Tuple4(deviceWidth, deviceHeight, centerHeight, imgSize), receiverId: othersId, letters: letters)),
+                      );
+                    },
+                  );
+                } else {
+                  // Your future is still loading
+                  return const CircularProgressIndicator();
+                }
+              },
+            ),
+          ),
+        ),
+        buildTreeById(othersId),
+      ],
+    );
+  }
+
+
   FutureBuilder<Stack> buildTreeOfMe() {
     return FutureBuilder<Stack>(
-    future: buildTree(centerWidth, centerWidth, context),
-    builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
-    if (snapshot.hasData) {
-      return snapshot.data!;
-    } else {
-      return CircularProgressIndicator();
-    }
-    },
-  );
+      future: buildTree(centerWidth, centerWidth, context),
+      builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
+        if (snapshot.hasData) {
+          print("first tab emerged");
+          return snapshot.data!;
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
   }
 
   FutureBuilder<Stack> buildTreeById(int id) {
     return FutureBuilder<Stack>(
-    future: buildOthersTree(id, centerWidth, centerWidth, context),
-    builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
-    if (snapshot.hasData) {
-      return snapshot.data!;
-    } else {
-      return CircularProgressIndicator();
-    }
+      future: buildOthersTree(id, centerWidth, centerWidth, context),
+      builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
+      if (snapshot.hasData) {
+        return snapshot.data!;
+      } else {
+        return const CircularProgressIndicator();
+      }
     },
   );
   }
-
-  // Row userGridData() {
-  //   return Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //             children: const [
-  //               ImageThumbnail(image: "assets/images/apple.png", name: "Album 1", id: 1,),
-  //               ImageThumbnail(image: "assets/images/apple.png", name: "Album 2", id: 2,),
-  //               ImageThumbnail(image: "assets/images/apple.png", name: "Album 3", id: 3,),
-  //             ],
-  //           );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -537,7 +524,6 @@ class _FirstState extends State<FirstPage> {
                 builder: (context, constraints) {
                   centerHeight = constraints.maxHeight;
                   centerWidth = constraints.maxWidth;
-                  // print("deviceHeight: $deviceHeight, deviceWidth: $deviceWidth, centerHeight: $centerHeight, centerWidth: $centerWidth");
                   return Center(
                     child: _widgetOptions.elementAt(_selectedIndex),
                   );
@@ -638,7 +624,6 @@ class ImageThumbnail extends StatelessWidget {
             ),
             iconSize: 30,
             onPressed: () {
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => LetterScreen(argument: , id: id,)));
               func(context, id);
             },
           ),
@@ -704,3 +689,4 @@ List<List<T>> splitListIntoChunks<T>(List<T> list, int chunkSize) {
   }
   return chunks;
 }
+
