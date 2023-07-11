@@ -43,12 +43,7 @@ class _FirstState extends State<FirstPage> {
   }
 
   Future<List<User>> getUsersList() async {
-<<<<<<< HEAD
-    final request = Uri.parse("http://168.131.151.213:4040/users");
-=======
     final request = Uri.parse("$baseUrl/users");
->>>>>>> 0e48a6bcc126fa35c37e49720fe9ed44f4381e26
-
     final jwtToken = await getJwtToken();
     final headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -65,11 +60,7 @@ class _FirstState extends State<FirstPage> {
   }
   
   Future<List<Container>> fetchFruits() async {
-<<<<<<< HEAD
-    const String Url = "http://168.131.151.213:4040/received_letters";
-=======
     final String Url = "$baseUrl/received_letters";
->>>>>>> 0e48a6bcc126fa35c37e49720fe9ed44f4381e26
     final jwtToken = await getJwtToken();
     final request = Uri.parse(Url);
     final headers = <String, String> {
@@ -100,11 +91,7 @@ class _FirstState extends State<FirstPage> {
   }
 
   Future<Tuple2<List<Container>,List<Letter>>> othersFruits(int id) async {
-<<<<<<< HEAD
-    String Url = "http://168.131.151.213:4040/received_letters?id=$id";
-=======
     final String Url = "$baseUrl/received_letters?id=$id";
->>>>>>> 0e48a6bcc126fa35c37e49720fe9ed44f4381e26
     var jwtToken = await getJwtToken();
     var request = Uri.parse(Url);
     var headers = <String, String> {
@@ -282,11 +269,7 @@ class _FirstState extends State<FirstPage> {
 
 
   Future<String> getSenderById(int id) async{
-<<<<<<< HEAD
-    final String Url = 'http://168.131.151.213:4040/user?id=$id';
-=======
     final String Url = '$baseUrl/user?id=$id';
->>>>>>> 0e48a6bcc126fa35c37e49720fe9ed44f4381e26
     final jwtToken = await getJwtToken();
     final request = Uri.parse(Url);
     final headers = <String, String> {
@@ -352,11 +335,7 @@ class _FirstState extends State<FirstPage> {
     void FlutterDialog(BuildContext context, int id) async {
       try
       {
-<<<<<<< HEAD
-        final String Url = "http://168.131.151.213:4040/letter?id=$id";
-=======
         final String Url = "$baseUrl/letter?id=$id";
->>>>>>> 0e48a6bcc126fa35c37e49720fe9ed44f4381e26
         final jwtToken = await getJwtToken();
         final request = Uri.parse(Url);
         final headers = <String, String> {
