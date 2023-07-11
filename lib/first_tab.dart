@@ -11,6 +11,9 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:tuple/tuple.dart';
 
+String backgroundImagePath = "assets/images/universe5.jpg";
+String surfaceImagePath = "assets/images/mars1.png";
+
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});
 
@@ -122,28 +125,8 @@ class _FirstState extends State<FirstPage> {
     List<Container> fruits = await fetchFruits();
     return Stack(
             children: [
-              Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/tree.png'),
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          height: cntrWidth,
-                          width: cntrWidth,
-                        ),
-                      ]
-                    ),
-                  ],
-                ),
-              ),
+              mars2(),
+              settingTree(cntrWidth),
               for(var fruit in fruits)
                 fruit,
               ],
@@ -151,32 +134,93 @@ class _FirstState extends State<FirstPage> {
           );
   }
 
+  Container settingTree(double cntrWidth) {
+    return Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/tree.png'),
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        height: cntrWidth,
+                        width: cntrWidth,
+                      ),
+                    ]
+                  ),
+                ],
+              ),
+            );
+  }
+
+  Positioned moon2() {
+    return Positioned(
+              top: 580,
+              left: 0,
+              right: 0,
+              child: Transform.scale(
+                scale: 3.8,
+                child: Image.asset(
+                  "assets/images/moon2.png",
+                ),
+              ),
+            );
+  }
+
+  Positioned moon1() {
+    return Positioned(
+              top: 530,
+              left: 0,
+              right: 0,
+              child: Transform.scale(
+                scale: 2.7,
+                child: Image.asset(
+                  "assets/images/moon1.png",
+                ),
+              ),
+            );
+  }
+
+  Positioned mars2() {
+    return Positioned(
+              top: 700,
+              left: 0,
+              right: 0,
+              child: Transform.scale(
+                scale: 3.5,
+                child: Image.asset(
+                  "assets/images/mars2.png",
+                ),
+              ),
+            );
+  }
+
+  Positioned mars1() {
+    return Positioned(
+      top: 720,
+      left: 0,
+      right: 0,
+      child: Transform.scale(
+        scale: 2.2,
+        child: Image.asset(
+          "assets/images/mars1.png",
+        ),
+      ),
+    );
+  }
+
   Future<Stack> buildOthersTree(int id, double cntrHeight, double cntrWidth, BuildContext context) async {
     Tuple2<List<Container>, List<Letter>> fruits = await othersFruits(id);
     return Stack(
             children: [
-              Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/tree.png'),
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          height: cntrWidth,
-                          width: cntrWidth,
-                        ),
-                      ]
-                    ),
-                  ],
-                ),
-              ),
+              moon1(),
+              settingTree(cntrWidth),
               for(var fruit in fruits.item1)
                 fruit,
             ],
@@ -378,7 +422,7 @@ class _FirstState extends State<FirstPage> {
           return Stack(
             children: [
               Image.asset(
-                "assets/images/universe3.png",
+                backgroundImagePath,
                 height: deviceHeight,
                 width: deviceWidth,
                 fit: BoxFit.cover,
@@ -394,47 +438,10 @@ class _FirstState extends State<FirstPage> {
     );
   }
 
-  // Stack buildOthersTreePage(int othersId) {
-  //     while(true) {
-  //       var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
-  //       if (!isNotValidLetterPos([], x, y)) {
-  //         // containers.add(createFruit(context, x, y, fruit));
-  //         break;
-  //       } 
-  //     }
-  //   Tuple2<double, double> position= Tuple2(100.0, 100.0);
-  //   return Stack(
-  //     children: [
-  //       Positioned(
-  //         left: 0,
-  //         right: 0,
-  //         bottom: deviceHeight / 30,
-  //         child: Transform.scale(
-  //           scale: 0.5,
-  //           child: InkWell(
-  //             child: Container(
-  //               child: Image.asset(
-  //                 "assets/images/writeimg.png",
-  //                 fit: BoxFit.cover,
-  //               ),
-  //             ),
-  //             onTap: () {
-  //               Navigator.push(
-  //                 context,
-  //                 MaterialPageRoute(builder: (context) => LetterScreen(argument: position, id: 1,)),
-  //               );
-  //             },
-  //           ),
-  //         ),
-  //       ),
-  //     buildTreeById(othersId),
-  //   ],
-  // );
-  // }
-
   Stack buildOthersTreePage(int othersId) {
     return Stack(
       children: [
+        buildTreeById(othersId),
         Positioned(
           left: 0,
           right: 0,
@@ -452,7 +459,10 @@ class _FirstState extends State<FirstPage> {
                   // Your future has completed. Extract the data you need from the snapshot
                   List<Letter> letters = snapshot.data?.item2 ?? [];
                   return InkWell(
-                    child: Container(
+                    child: Positioned(
+                      top: 60,
+                      left: 0,
+                      right: 0,
                       child: Image.asset(
                         "assets/images/writeimg.png",
                         fit: BoxFit.cover,
@@ -473,7 +483,6 @@ class _FirstState extends State<FirstPage> {
             ),
           ),
         ),
-        buildTreeById(othersId),
       ],
     );
   }
@@ -511,7 +520,7 @@ class _FirstState extends State<FirstPage> {
     return Stack(
         children:[
           Image.asset(
-            "assets/images/universe3.png",
+            backgroundImagePath,
             height: deviceHeight,
             width: deviceWidth,
             fit: BoxFit.cover,
