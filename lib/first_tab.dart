@@ -126,63 +126,53 @@ class _FirstState extends State<FirstPage> {
     List<Container> fruits = await fetchFruits();
     String userName = await getUserName();
     return Stack(
-            children: [
-              mars2(),
-              settingTree(cntrWidth),
-              for(var fruit in fruits)
-                fruit,
-              Stack(
-                children: [
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: deviceHeight / 25,
-                    child: Transform.scale(
-                      scale: 0.73,
-                      child: Center(
-                        child: InkWell(
-                          onTap: () {
-                            Fluttertoast.showToast(
-                              msg: "오늘은 얼마나 편지가 왔을까~",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              backgroundColor: Colors.grey[300],
-                              textColor: Colors.black,
-                              fontSize: 16.0,
-                            );
-                          },
-                          child: Transform.scale(
-                            scale: 1,
-                            child: Image.asset(
-                              "assets/images/namesign.png",
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: deviceHeight / 11.4,
-                    child: Center(
-                      child: Text(
-                        userName,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontFamily: "mainfont",
-                          fontSize: 40.0,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+      children: [
+        mars2(),
+        settingTree(cntrWidth),
+        for(var fruit in fruits)
+          fruit,
+        Stack(
+          children: [
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: deviceHeight / 25,
+              child: InkWell(
+                onTap: () {
+                  Fluttertoast.showToast(
+                    msg: "오늘은 얼마나 편지가 왔을까~",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.grey[300],
+                    textColor: Colors.black,
+                    fontSize: 16.0,
+                  );
+                },
+                child: Image.asset(
+                  "assets/images/namesign.png",
+                  fit: BoxFit.contain,
+                ),
               ),
-            ],
-          );
+            ),
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  userName,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: "mainfont.ttf",
+                    fontSize: 40.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   Container settingTree(double cntrWidth) {
