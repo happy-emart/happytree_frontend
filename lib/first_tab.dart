@@ -67,33 +67,39 @@ class _FirstState extends State<FirstPage> {
     }
     return users;
   }
+  
+      // for(var fruit in fruitList) {
+
+      //   while(true) {
+      //     var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
+      //     if (!isNotValidLetterPos([], x, y)) {
+      //       containers.add(createFruit(context, x, y, fruit));
+      //       break;
+      //     }
+      //   }
+      // }
 
   Future<List<Container>> fetchFruits() async {
-    String Url = "http://127.0.0.1:8080/received_letters";
-    var jwtToken = await getJwtToken();
-    var request = Uri.parse(Url);
-    var headers = <String, String> {
+    const String Url = "http://127.0.0.1:8080/received_letters";
+    final jwtToken = await getJwtToken();
+    final request = Uri.parse(Url);
+    final headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': 'Bearer $jwtToken'
     };
 
     try
     {
-      var response = await http.get(request, headers: headers);
-      List<dynamic> jsonList = jsonDecode(response.body);
-      print(jsonList); // checking the validity of the letters list
-      List<int> fruitList = jsonList.cast<int>();
+      final response = await http.get(request, headers: headers);
+      var json = jsonDecode(response.body);
+      List<Letter> letters = [];
       List<Container> containers = [];
+      for (var LetterJson in json) {
+        letters.add(Letter.fromJson(LetterJson));
+      }
 
-      for(var fruit in fruitList) {
-
-        while(true) {
-          var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
-          if (!isNotValidLetterPos([], x, y)) {
-            containers.add(createFruit(context, x, y, fruit));
-            break;
-          }
-        }
+      for(var fruit in letters) {
+        containers.add(createFruit(context, fruit.posX, fruit.posY, fruit.id));
       }
       return containers;
     }
@@ -116,20 +122,16 @@ class _FirstState extends State<FirstPage> {
     try
     {
       var response = await http.get(request, headers: headers);
-      List<dynamic> jsonList = jsonDecode(response.body);
-      print(jsonList); // checking the validity of the letters list
-      List<int> fruitList = jsonList.cast<int>();
+      List<Letter> letters = [];
       List<Container> containers = [];
+      var json = jsonDecode(response.body);
+      // print(jsonList); // checking the validity of the letters list
+      for (var LetterJson in json) {
+        letters.add(Letter.fromJson(LetterJson));
+      }
 
-      for(var fruit in fruitList) {
-
-        while(true) {
-          var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
-          if (!isNotValidLetterPos([], x, y)) {
-            containers.add(createFruit(context, x, y, fruit));
-            break;
-          }
-        }
+      for(var fruit in letters) {
+        containers.add(createFruit(context, fruit.posX, fruit.posY, fruit.id));
       }
       return containers;
     }
@@ -217,7 +219,6 @@ class _FirstState extends State<FirstPage> {
     };
     try {
       final response = await http.get(request, headers: headers);
-      print(response.body);
       return response.body;
 
     }
@@ -667,6 +668,31 @@ class User {
       email: json['email'],
       password: json['password'],
       username: json['username'],
+    );
+  }
+}
+
+class Letter {
+  final int id;
+  final int senderId;
+  final int receivedId;
+  final String text;
+  final double posX;
+  final double posY;
+  final int imgType;
+
+  Letter({required this.id, required this.senderId, required this.receivedId, required this.text,
+  required this.posX, required this.posY, required this.imgType});
+
+  factory Letter.fromJson(Map<String, dynamic> json) {
+    return Letter(
+      id: json['id'],
+      receivedId: json['receiverId'],
+      senderId: json['senderId'],
+      text: json['text'],
+      posX: json['posX'],
+      posY: json['posY'],
+      imgType: json['imgType']
     );
   }
 }
