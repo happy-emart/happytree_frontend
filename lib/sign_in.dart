@@ -51,7 +51,11 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
   }
 
   void _signup() async {
+<<<<<<< HEAD
+    const String Url = "http://168.131.151.213:4040/signup";
+=======
     final String Url = "$baseUrl/signup";
+>>>>>>> 0e48a6bcc126fa35c37e49720fe9ed44f4381e26
     final request = Uri.parse(Url);
     var headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -75,7 +79,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     }
     else
     {
-      print('Request failed with status: ${response.statusCode}');
+      print('Signup failed with status');
     }
   }
 

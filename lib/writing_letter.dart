@@ -176,7 +176,7 @@ class sendigButton extends StatelessWidget {
 }
 
 void sendLetter(Map<String, dynamic> body) async {
-  const String Url = "http://127.0.0.1:8080/sent_letters";
+  const String Url = "http://168.131.151.213:4040/sent_letters";
   final request = Uri.parse(Url);
   final jwtToken = await getJwtToken();
   final headers = <String, String> {
