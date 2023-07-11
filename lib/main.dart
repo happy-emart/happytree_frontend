@@ -1,10 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/sign_in.dart';
-import 'package:mysql1/mysql1.dart';
-import 'kakao_login.dart';
 import 'login.dart';
-import 'dart:convert';
 
 void main() => runApp(MaterialApp(
     builder: (context, child) {
@@ -15,19 +12,6 @@ void main() => runApp(MaterialApp(
       primaryColor: Colors.grey[800],
     ),
     home: const MainScreen()));
-
-// class MainApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Login App',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: MainScreen(),
-//     );
-//   }
-// }
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

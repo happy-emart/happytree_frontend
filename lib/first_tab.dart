@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
-import 'dart:math' as math;
 import 'package:tuple/tuple.dart';
 
 class FirstPage extends StatefulWidget {
@@ -22,8 +21,8 @@ class FirstPage extends StatefulWidget {
 class _FirstState extends State<FirstPage> {
   late double deviceWidth = MediaQuery.of(context).size.width;  // 화면의 가로 크기
   late double deviceHeight = MediaQuery.of(context).size.height; // 화면의 세로 크기
-  late double centerHeight = 0.0;
   late double centerWidth = 0.0;
+  late double centerHeight = 0.0;
   late double poleHeight = deviceWidth*0.13;
   double imgSize = 48; // 1:1 image
 
@@ -37,17 +36,6 @@ class _FirstState extends State<FirstPage> {
   Future<String?> getJwtToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('jwtToken');
-  }
-
-  bool isNotValidLetterPos(List<String> letters, double x, double y) {
-    if ((math.pow(x-(centerWidth-imgSize)*0.5, 2) + math.pow(y-(centerWidth-imgSize-poleHeight)*0.5, 2))>=math.pow((centerWidth-poleHeight)*0.5, 2)) {
-      return true;
-    }
-    return false;
-  }
-
-  (double, double) getRandPos(double startPoint, double endPoint, double deviceWidth) {
-    return (topPoint + math.Random().nextDouble()*(endPoint-startPoint), startPoint + math.Random().nextDouble()*(endPoint-startPoint));
   }
 
   Future<List<User>> getUsersList() async {
@@ -67,7 +55,7 @@ class _FirstState extends State<FirstPage> {
     }
     return users;
   }
-
+  
   Future<List<Container>> fetchFruits() async {
     const String Url = "http://127.0.0.1:8080/received_letters";
     final jwtToken = await getJwtToken();
@@ -88,8 +76,8 @@ class _FirstState extends State<FirstPage> {
       }
 
       for(var fruit in letters) {
-            containers.add(createFruit(context, fruit.posX, fruit.posY, fruit.id));
-          }
+        containers.add(createFruit(context, fruit.posX, fruit.posY, fruit.id));
+      }
       return containers;
     }
     catch(error)
@@ -97,6 +85,37 @@ class _FirstState extends State<FirstPage> {
       print('error : $error');
     }
     return [];
+  }
+
+  Future<Tuple2<List<Container>,List<Letter>>> othersFruits(int id) async {
+    String Url = "http://127.0.0.1:8080/received_letters?id=$id";
+    var jwtToken = await getJwtToken();
+    var request = Uri.parse(Url);
+    var headers = <String, String> {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    try
+    {
+      var response = await http.get(request, headers: headers);
+      List<Letter> letters = [];
+      List<Container> containers = [];
+      var json = jsonDecode(response.body);
+      // print(jsonList); // checking the validity of the letters list
+      for (var letterJson in json) {
+        letters.add(Letter.fromJson(letterJson));
+      }
+      for(var fruit in letters) {
+        containers.add(createFruit(context, fruit.posX, fruit.posY, fruit.id));
+      }
+      return Tuple2(containers, letters);
+    }
+    catch(error)
+    {
+      print('error : $error');
+    }
+    return const Tuple2([], []);
   }
 
   Future<Stack> buildTree(double cntrHeight, double cntrWidth, BuildContext context) async {
@@ -129,6 +148,38 @@ class _FirstState extends State<FirstPage> {
                 fruit,
               ],
               // buildImageStack(5),
+          );
+  }
+
+  Future<Stack> buildOthersTree(int id, double cntrHeight, double cntrWidth, BuildContext context) async {
+    Tuple2<List<Container>, List<Letter>> fruits = await othersFruits(id);
+    return Stack(
+            children: [
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/tree.png'),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          height: cntrWidth,
+                          width: cntrWidth,
+                        ),
+                      ]
+                    ),
+                  ],
+                ),
+              ),
+              for(var fruit in fruits.item1)
+                fruit,
+            ],
           );
   }
 
@@ -179,7 +230,6 @@ class _FirstState extends State<FirstPage> {
   }
 
     void FlutterDialog(BuildContext context, int id) async {
-
       try
       {
         final String Url = "http://127.0.0.1:8080/letter?id=$id";
@@ -224,7 +274,7 @@ class _FirstState extends State<FirstPage> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
                             Text(
-                              '$text',
+                              text,
                               style: const TextStyle(fontSize: 16.0),
                             ),
                             // getLetterById.getContents(),
@@ -250,7 +300,7 @@ class _FirstState extends State<FirstPage> {
           }
         else
           {
-            throw HttpException("You cannot access to letter");
+            throw const HttpException("You cannot access to letter");
           }
       }
       catch(error)
@@ -267,17 +317,122 @@ class _FirstState extends State<FirstPage> {
 
 
   late final List<Widget> _widgetOptions = <Widget>[
-    FutureBuilder<Stack>(
-      future: buildTree(centerWidth, centerWidth, context),
-      builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
+    buildTreeOfMe(),
+    getOthersTreeView(),
+    const Text("hiiiii"),
+    const Text("second hiiii"),
+  ];
+
+  FutureBuilder<List<User>> getOthersTreeView() {
+    return FutureBuilder<List<User>>(
+    future: getUsersList(),
+    builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
       if (snapshot.hasData) {
-        return snapshot.data!;
+        print("Two tab emerge");
+        List<User> users = snapshot.data!;
+        List<List<User>> userChunks = splitListIntoChunks(users, 3);
+        return SingleChildScrollView(
+          child: AnimationLimiter(
+            child: Column(
+              children: AnimationConfiguration.toStaggeredList(
+                  duration: const Duration(milliseconds: 500),
+                  childAnimationBuilder: (widget) => SlideAnimation(
+                    horizontalOffset: 100.0,
+                    child: FadeInAnimation(
+                      child: widget,
+                    ),
+                  ),
+                  children: userChunks.map((userChunk) {
+                    return Row(
+                      children: userChunk.map((user) {
+                        return Expanded(
+                          child: ImageThumbnail(
+                            image: "assets/images/apple.png",
+                            name: user.username,
+                            id: user.id,
+                            func: openOthersTreePage,
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  }).toList(),
+                  ),
+          ),
+        )
+      );
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
       } else {
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       }
-      },
-    ),
-    Stack(
+    },
+  );
+  }
+
+  void openOthersTreePage(BuildContext context, int othersId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return Stack(
+            children: [
+              Image.asset(
+                "assets/images/universe3.png",
+                height: deviceHeight,
+                width: deviceWidth,
+                fit: BoxFit.cover,
+              ),
+              Scaffold(
+                backgroundColor: Colors.transparent,
+                body: buildOthersTreePage(othersId),
+              )
+            ],
+          );
+        }
+      )
+    );
+  }
+
+  // Stack buildOthersTreePage(int othersId) {
+  //     while(true) {
+  //       var (x, y) = getRandPos(startPoint, endPoint, deviceWidth);
+  //       if (!isNotValidLetterPos([], x, y)) {
+  //         // containers.add(createFruit(context, x, y, fruit));
+  //         break;
+  //       } 
+  //     }
+  //   Tuple2<double, double> position= Tuple2(100.0, 100.0);
+  //   return Stack(
+  //     children: [
+  //       Positioned(
+  //         left: 0,
+  //         right: 0,
+  //         bottom: deviceHeight / 30,
+  //         child: Transform.scale(
+  //           scale: 0.5,
+  //           child: InkWell(
+  //             child: Container(
+  //               child: Image.asset(
+  //                 "assets/images/writeimg.png",
+  //                 fit: BoxFit.cover,
+  //               ),
+  //             ),
+  //             onTap: () {
+  //               Navigator.push(
+  //                 context,
+  //                 MaterialPageRoute(builder: (context) => LetterScreen(argument: position, id: 1,)),
+  //               );
+  //             },
+  //           ),
+  //         ),
+  //       ),
+  //     buildTreeById(othersId),
+  //   ],
+  // );
+  // }
+
+  Stack buildOthersTreePage(int othersId) {
+    return Stack(
       children: [
         Positioned(
           left: 0,
@@ -285,112 +440,69 @@ class _FirstState extends State<FirstPage> {
           bottom: deviceHeight / 30,
           child: Transform.scale(
             scale: 0.5,
-            child: InkWell(
-              child: Container(
-                child: Image.asset(
-                  "assets/images/writeimg.png",
-                  fit: BoxFit.cover,
-                ),
-              ),
-              onTap: () {
-                Tuple2<double, double> position= Tuple2(100.0, 100.0);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LetterScreen(argument: position, id: 1,)),
-                );
+            child: FutureBuilder<Tuple2<List<Container>,List<Letter>>>(
+              future: othersFruits(othersId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    // Do something with your error
+                    return const Text('Error occurred');
+                  }
+                  // Your future has completed. Extract the data you need from the snapshot
+                  List<Letter> letters = snapshot.data?.item2 ?? [];
+                  return InkWell(
+                    child: Container(
+                      child: Image.asset(
+                        "assets/images/writeimg.png",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LetterScreen(argument: Tuple4(deviceWidth, deviceHeight, centerHeight, imgSize), receiverId: othersId, letters: letters)),
+                      );
+                    },
+                  );
+                } else {
+                  // Your future is still loading
+                  return const CircularProgressIndicator();
+                }
               },
             ),
           ),
         ),
+        buildTreeById(othersId),
       ],
-    ),
-    SingleChildScrollView(
-      child: AnimationLimiter(
-        child: Column(
-          children: AnimationConfiguration.toStaggeredList(
-            duration: const Duration(milliseconds: 500),
-            childAnimationBuilder: (widget) => SlideAnimation(
-              horizontalOffset: 100.0,
-              child: FadeInAnimation(
-                child: widget,
-              ),
-            ),
-            children: [
-              userGridData(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 4", id: 4,),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 5", id: 5,),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 6", id: 6,),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 7", id: 7,),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 8", id: 8),
-                  ImageThumbnail(image: "assets/images/apple.png", name: "Album 9", id: 9,),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-    FutureBuilder<List<User>>(
-      future: getUsersList(),
-      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
-        if (snapshot.hasData) {
-          List<User> users = snapshot.data!;
-          List<List<User>> userChunks = splitListIntoChunks(users, 3);
+    );
+  }
 
-          return SingleChildScrollView(
-            child: AnimationLimiter(
-              child: Column(
-                children: AnimationConfiguration.toStaggeredList(
-                    duration: const Duration(milliseconds: 500),
-                    childAnimationBuilder: (widget) => SlideAnimation(
-                      horizontalOffset: 100.0,
-                      child: FadeInAnimation(
-                        child: widget,
-                      ),
-                    ),
-                    children: userChunks.map((userChunk) {
-                      return Row(
-                        children: userChunk.map((user) {
-                          return Expanded(
-                            child: ImageThumbnail(
-                              image: "assets/images/apple.png",
-                              name: user.username,
-                              id: user.id,
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    }).toList(),
-                    ),
-            ),
-          )
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+
+  FutureBuilder<Stack> buildTreeOfMe() {
+    return FutureBuilder<Stack>(
+      future: buildTree(centerWidth, centerWidth, context),
+      builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
+        if (snapshot.hasData) {
+          print("first tab emerged");
+          return snapshot.data!;
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
-    ),
-  ];
+    );
+  }
 
-  Row userGridData() {
-    return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
-                ImageThumbnail(image: "assets/images/apple.png", name: "Album 1", id: 1,),
-                ImageThumbnail(image: "assets/images/apple.png", name: "Album 2", id: 2,),
-                ImageThumbnail(image: "assets/images/apple.png", name: "Album 3", id: 3,),
-              ],
-            );
+  FutureBuilder<Stack> buildTreeById(int id) {
+    return FutureBuilder<Stack>(
+      future: buildOthersTree(id, centerWidth, centerWidth, context),
+      builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
+      if (snapshot.hasData) {
+        return snapshot.data!;
+      } else {
+        return const CircularProgressIndicator();
+      }
+    },
+  );
   }
 
   @override
@@ -405,18 +517,12 @@ class _FirstState extends State<FirstPage> {
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
-            // back
-            // appBar: AppBar(
-            //   elevation: 20,
-            //   title: const Text('GoogleNavBar'),
-            // ),
             body: Padding(
               padding: EdgeInsets.fromLTRB(0, deviceHeight*0.07, 0, 0),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   centerHeight = constraints.maxHeight;
                   centerWidth = constraints.maxWidth;
-                  // print("deviceHeight: $deviceHeight, deviceWidth: $deviceWidth, centerHeight: $centerHeight, centerWidth: $centerWidth");
                   return Center(
                     child: _widgetOptions.elementAt(_selectedIndex),
                   );
@@ -488,11 +594,12 @@ void startFirstPage(BuildContext context) {
 
 
 class ImageThumbnail extends StatelessWidget {
-  const ImageThumbnail({Key? key, required this.image, required this.name, required this.id})
+  const ImageThumbnail({Key? key, required this.image, required this.name, required this.id, required this.func,})
       : super(key: key);
   final String image;
   final String name;
   final int id;
+  final Function func;
 
   @override
   Widget build(BuildContext context) {
@@ -516,7 +623,7 @@ class ImageThumbnail extends StatelessWidget {
             ),
             iconSize: 30,
             onPressed: () {
-              //Navigator.push(context, MaterialPageRoute(builder: (context) => LetterScreen(argument: , id: id,)));
+              func(context, id);
             },
           ),
         ),
@@ -559,7 +666,7 @@ class Letter {
   final int imgType;
 
   Letter({required this.id, required this.senderId, required this.receivedId, required this.text,
-   required this.posX, required this.posY, required this.imgType});
+  required this.posX, required this.posY, required this.imgType});
 
   factory Letter.fromJson(Map<String, dynamic> json) {
     return Letter(
@@ -581,3 +688,4 @@ List<List<T>> splitListIntoChunks<T>(List<T> list, int chunkSize) {
   }
   return chunks;
 }
+
