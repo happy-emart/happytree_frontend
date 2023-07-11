@@ -65,7 +65,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const KakaoApp()));
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => const KakaoApp()));
               },
               child: const Text('Login with Kakaotalk'),
             ),
