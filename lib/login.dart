@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   }
 
   void _login() async {
-    const String Url = "http://localhost:8080/auth";
+    const String Url = "http://127.0.0.1:8080/auth";
     final request = Uri.parse(Url);
     var headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',

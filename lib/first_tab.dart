@@ -690,8 +690,8 @@ class Letter {
       receivedId: json['receiverId'],
       senderId: json['senderId'],
       text: json['text'],
-      posX: json['posX'],
-      posY: json['posY'],
+      posX: json['posX'].toDouble(),
+      posY: json['posY'].toDouble(),
       imgType: json['imgType']
     );
   }
