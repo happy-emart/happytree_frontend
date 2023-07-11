@@ -46,8 +46,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   }
 
   void _login() async {
-    // const String Url = "http://localhost:8080/auth";
-    const String Url = "http://localhost:8080/";
+    const String Url = "http://localhost:8080/auth";
     final request = Uri.parse(Url);
     var headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -63,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     http.Response response;
 
     response = await http.post(request, headers: headers, body: json.encode(body));
+    print(response.body);
     if(response.statusCode == 200)
     {
       storeJwtToken(response.body);

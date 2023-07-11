@@ -16,19 +16,6 @@ void main() => runApp(MaterialApp(
     ),
     home: const MainScreen()));
 
-// class MainApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Login App',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: MainScreen(),
-//     );
-//   }
-// }
-
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
