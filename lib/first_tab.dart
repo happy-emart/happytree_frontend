@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/writing_letter.dart';
+import 'package:flutter_application_1/writing_papaer.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -39,12 +40,7 @@ class _FirstState extends State<FirstPage> {
     });
     _refreshController2.refreshCompleted();
   }
-
-  late double deviceWidth = MediaQuery.of(context).size.width;  // 화면의 가로 크기
-  late double deviceHeight = MediaQuery.of(context).size.height; // 화면의 세로 크기
-  late double centerWidth = 0.0;
-  late double centerHeight = 0.0;
-  late double poleHeight = deviceWidth*0.13;
+  
   double transform_x(double origin) {
     return origin * centerHeight / 768;
   }
@@ -52,11 +48,15 @@ class _FirstState extends State<FirstPage> {
     return origin * deviceWidth / 430;
   }
 
-  late double imgSize = transform_y(48.0); // 1:1 image
+  late double deviceWidth = MediaQuery.of(context).size.width;  // 화면의 가로 크기
+  late double deviceHeight = MediaQuery.of(context).size.height; // 화면의 세로 크기
+  late double centerWidth = 0.0;
+  late double centerHeight = 0.0;
+  late double poleHeight = deviceWidth*0.13;
+  double imgSize = 48; // 1:1 image
 
-  late final topPoint = transform_y((centerHeight - deviceWidth)*0.5); // img size = 48
-  late final bottomPoint = topPoint + transform_y(deviceWidth) - transform_y(poleHeight) - transform_y(imgSize); // img size = 48
-
+  late final topPoint = (centerHeight - deviceWidth)*0.5; // img size = 48
+  late final bottomPoint = topPoint + deviceWidth - poleHeight - imgSize; // img size = 48
   late final startPoint = 0.0;
   late final endPoint = startPoint + deviceWidth - imgSize; // img size = 48
   List<int> fruits = [];
@@ -83,7 +83,7 @@ class _FirstState extends State<FirstPage> {
     }
     return users;
   }
-  
+
   Future<List<Container>> fetchFruits() async {
     final String Url = "$baseUrl/received_letters";
     final jwtToken = await getJwtToken();
@@ -205,27 +205,27 @@ class _FirstState extends State<FirstPage> {
 
   Container settingTree(double cntrWidth) {
     return Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/tree.png'),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        height: cntrWidth,
-                        width: cntrWidth,
-                      ),
-                    ]
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/tree.png'),
+                      fit: BoxFit.fill,
+                    ),
                   ),
-                ],
-              ),
-            );
+                  height: cntrWidth,
+                  width: cntrWidth,
+                ),
+              ]
+          ),
+        ],
+      ),
+    );
   }
 
   Positioned moon2() {
@@ -287,13 +287,13 @@ class _FirstState extends State<FirstPage> {
   Future<Stack> buildOthersTree(int id, double cntrHeight, double cntrWidth, BuildContext context) async {
     Tuple2<List<Container>, List<Letter>> fruits = await othersFruits(id);
     return Stack(
-            children: [
-              moon1(),
-              settingTree(cntrWidth),
-              for(var fruit in fruits.item1)
-                fruit,
-            ],
-          );
+      children: [
+        moon1(),
+        settingTree(cntrWidth),
+        for(var fruit in fruits.item1)
+          fruit,
+      ],
+    );
   }
 
 
@@ -338,27 +338,27 @@ class _FirstState extends State<FirstPage> {
 
   Container createFruit(BuildContext context, double x, double y, int id) {
     return Container(
-            child: Positioned(
-              top: x * centerHeight / 768,
-              right: y * deviceWidth / 430,
-              child: Container(
-                child:
-                  IconButton( 
-                    icon: Transform.scale(
-                      scale: 3.5,
-                      child: Image.asset(
-                        "assets/images/apple.png",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    iconSize: 30,
-                    onPressed: () {
-                      FlutterDialog(context, id);
-                    },
-                  ),
+      child: Positioned(
+        top: x,
+        right: y,
+        child: Container(
+          child:
+          IconButton(
+            icon: Transform.scale(
+              scale: 3.5,
+              child: Image.asset(
+                "assets/images/apple.png",
+                fit: BoxFit.cover,
               ),
             ),
-          );
+            iconSize: 30,
+            onPressed: () {
+              FlutterDialog(context, id);
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   void FlutterDialog(BuildContext context, int id) async {
@@ -380,60 +380,60 @@ class _FirstState extends State<FirstPage> {
       var title = '$username님에게 온 편지';
 
       if(response.statusCode==200)
-        {
-          print(response.body);
-          return showDialog(
-              context: context,
-              //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
-              barrierDismissible: false,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0)),
-                  //Dialog Main Title
-                  title: Column(
-                    children: <Widget>[
-                      Text('$username님에게서 온 편지'),
-                    ],
-                  ),
-                  // title: Text("편지"),
-                  //
-                  content: Container(
-                    alignment: Alignment.center,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Text(
-                            text,
-                            style: const TextStyle(fontSize: 16.0),
-                          ),
-                          // getLetterById.getContents(),
-                        ],
-                      ),
-                    ),
-                  ),
-                  actions: <Widget>[
-                    Align(
-                      alignment: Alignment.center,
-                      child: TextButton(
-                        // alignment: Alignme
-                        child: const Text("잘 읽었어요"),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
+      {
+        print(response.body);
+        return showDialog(
+            context: context,
+            //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                //Dialog Main Title
+                title: Column(
+                  children: <Widget>[
+                    Text('$username님에게서 온 편지'),
                   ],
-                );
-              }
-          );
-        }
+                ),
+                // title: Text("편지"),
+                //
+                content: Container(
+                  alignment: Alignment.center,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Text(
+                          text,
+                          style: const TextStyle(fontSize: 16.0),
+                        ),
+                        // getLetterById.getContents(),
+                      ],
+                    ),
+                  ),
+                ),
+                actions: <Widget>[
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      // alignment: Alignme
+                      child: const Text("잘 읽었어요"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
+        );
+      }
       else
-        {
-          throw const HttpException("You cannot access to letter");
-        }
+      {
+        throw const HttpException("You cannot access to letter");
+      }
     }
     catch(error)
     {
@@ -442,16 +442,252 @@ class _FirstState extends State<FirstPage> {
 
   }
 
+  Future<void> PaperDialog(BuildContext context, int id) async {
+    try
+    {
+      var Url = "$baseUrl/paper?id=$id";
+      var jwtToken = await getJwtToken();
+      var request = Uri.parse(Url);
+      var headers = <String, String> {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $jwtToken'
+      };
+
+      var response = await http.get(request, headers: headers);
+      Map<String, dynamic> data = jsonDecode(response.body);
+      String text = data['text'];
+      int senderId = data['senderId'];
+      String username = await getSenderById(senderId);
+      var title = '$username님에게 온 편지';
+
+      if(response.statusCode==200)
+      {
+        print(response.body);
+        return showDialog(
+            context: context,
+            //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                //Dialog Main Title
+                title: Column(
+                  children: <Widget>[
+                    Text('$username님에게서 온 편지'),
+                  ],
+                ),
+                // title: Text("편지"),
+                //
+                content: Container(
+                  alignment: Alignment.center,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Text(
+                          text,
+                          style: const TextStyle(fontSize: 16.0),
+                        ),
+                        // getLetterById.getContents(),
+                      ],
+                    ),
+                  ),
+                ),
+                actions: <Widget>[
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      // alignment: Alignme
+                      child: const Text("잘 읽었어요"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
+        );
+      }
+      else
+      {
+        throw const HttpException("You cannot access to letter");
+      }
+    }
+    catch(error)
+    {
+      print('error : $error');
+    }
+
+  }
+
+    Future<List<Farm>> getFarmList() async {
+      final request = Uri.parse("$baseUrl/farm_list");
+      final jwtToken = await getJwtToken();
+      final headers = <String, String> {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $jwtToken'
+      };
+
+      var response = await http.get(request, headers: headers);
+      var json = jsonDecode(response.body);
+      List<Farm> farms = [];
+      for (var farmJson in json) {
+        farms.add(Farm.fromJson(farmJson));
+      }
+      return farms;
+    }
+
+    Future<List<Paper>> getPageList(int id) async {
+    final request = Uri.parse("$baseUrl/get_paper_of_farm?id=$id");
+    final jwtToken = await getJwtToken();
+    final headers = <String, String> {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    var response = await http.get(request, headers: headers);
+    var json = jsonDecode(response.body);
+    print(response.body);
+    List<Paper> papers = [];
+    for (var paperJson in json) {
+      papers.add(Paper.fromJson(paperJson));
+    }
+    return papers;
+  }
+
+
+
+  void navigateToPaperScreen(BuildContext context, int id, List<Paper> papers) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaperScreen(
+          argument: Tuple4(deviceWidth, deviceHeight, centerHeight, imgSize),
+          receiverId: id,
+          papers: papers,
+        ),
+      ),
+    );
+  }
+
+  void getOthersPaperView(BuildContext context, int id) async {
+    List<Paper> papers = await getPageList(id);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FutureBuilder<List<Paper>>(
+          future: Future.value(papers),
+          builder: (BuildContext context, AsyncSnapshot<List<Paper>> snapshot) {
+            if (snapshot.hasData) {
+              List<Paper> papers = snapshot.data!;
+              List<List<Paper>> paperChunks = splitListIntoChunks(papers, 3);
+              return SingleChildScrollView(
+                child: AnimationLimiter(
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          navigateToPaperScreen(context, id, papers);
+                        },
+                        child: Icon(Icons.add),
+                      ),
+                      ...paperChunks.map((paperChunk) {
+                        return Row(
+                          children: paperChunk.map((paper) {
+                            return Expanded(
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await PaperDialog(context, paper.id);
+                                },
+                                child: ImageThumbnail(
+                                  image: "assets/images/apple.png",
+                                  name: paper.senderId.toString(),
+                                  id: paper.id,
+                                  func: () {},
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }).toList(),
+                    ],
+                  ),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+
+
+
+
+  FutureBuilder<List<Farm>> getOthersFarmView() {
+    return FutureBuilder<List<Farm>>(
+      future: getFarmList(),
+      builder: (BuildContext context, AsyncSnapshot<List<Farm>> snapshot) {
+        if (snapshot.hasData) {
+          List<Farm> farms = snapshot.data!;
+          List<List<Farm>> farmChunks = splitListIntoChunks(farms, 3);
+          return SingleChildScrollView(
+            child: AnimationLimiter(
+              child: Column(
+                children: AnimationConfiguration.toStaggeredList(
+                  duration: const Duration(milliseconds: 500),
+                  childAnimationBuilder: (widget) => SlideAnimation(
+                    horizontalOffset: 100.0,
+                    child: FadeInAnimation(
+                      child: widget,
+                    ),
+                  ),
+                  children: farmChunks.map((farmChunk) {
+                    return Row(
+                      children: farmChunk.map((farm) {
+                        return Expanded(
+                          child: ImageThumbnail(
+                            image: "assets/images/apple.png",
+                            name: farm.name,
+                            id: farm.id,
+                            func: () => getOthersPaperView(context, farm.id),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
 
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
+  TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
 
 
   late final List<Widget> _widgetOptions = <Widget>[
     buildTreeOfMe(),
     getOthersTreeView(),
-    const Text("hhh"),
+    getOthersFarmView(),
   ];
 
   FutureBuilder<List<User>> getOthersTreeView() {
@@ -613,13 +849,13 @@ class _FirstState extends State<FirstPage> {
     return FutureBuilder<Stack>(
       future: buildOthersTree(id, centerWidth, centerWidth, context),
       builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
-      if (snapshot.hasData) {
-        return snapshot.data!;
-      } else {
-        return const CircularProgressIndicator();
-      }
-    },
-  );
+        if (snapshot.hasData) {
+          return snapshot.data!;
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
   }
 
   @override
@@ -733,7 +969,7 @@ class ImageThumbnail extends StatelessWidget {
           // decoration: BoxDecoration(
           //   image: DecorationImage(fit: BoxFit.fill, image: AssetImage(image)),
           //   borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-          child: IconButton( 
+          child: IconButton(
             icon: Transform.scale(
               scale: 1.5,
               child: Image.asset(
@@ -748,9 +984,9 @@ class ImageThumbnail extends StatelessWidget {
           ),
         ),
         Container(
-          color: Colors.black87,
-          alignment: Alignment.center,
-          child:
+            color: Colors.black87,
+            alignment: Alignment.center,
+            child:
             Text(name, style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white))),
         const SizedBox(height: 20)
       ],
@@ -786,17 +1022,49 @@ class Letter {
   final int imgType;
 
   Letter({required this.id, required this.senderId, required this.receivedId, required this.text,
-  required this.posX, required this.posY, required this.imgType});
+    required this.posX, required this.posY, required this.imgType});
 
   factory Letter.fromJson(Map<String, dynamic> json) {
     return Letter(
+        id: json['id'],
+        receivedId: json['receiverId'],
+        senderId: json['senderId'],
+        text: json['text'],
+        posX: json['posX'].toDouble(),
+        posY: json['posY'].toDouble(),
+        imgType: json['imgType']
+    );
+  }
+}
+
+class Farm {
+  final int id;
+  final String name;
+
+  Farm({required this.id, required this.name});
+
+  factory Farm.fromJson(Map<String, dynamic> json) {
+    return Farm(
+        id: json['id'],
+        name: json['name'],
+    );
+  }
+}
+
+class Paper {
+  final int id;
+  final int farmId;
+  final String text;
+  final int senderId;
+
+  Paper({required this.id, required this.farmId, required this.text, required this.senderId});
+
+  factory Paper.fromJson(Map<String, dynamic> json) {
+    return Paper(
       id: json['id'],
-      receivedId: json['receiverId'],
-      senderId: json['senderId'],
       text: json['text'],
-      posX: json['posX'].toDouble(),
-      posY: json['posY'].toDouble(),
-      imgType: json['imgType']
+      farmId: json['farmId'],
+      senderId: json['senderId']
     );
   }
 }
@@ -828,5 +1096,3 @@ void showCustomToast(BuildContext context, String message) {
     ),
   );
 }
-
-
