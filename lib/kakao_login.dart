@@ -43,12 +43,13 @@ class _WebViewPageState extends State<WebViewPage> {
 
             if(data == "")
               {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()));
+                Navigator.pop(context);
               }
             else
               {
                 storeJwtToken(data!);
-                startFirstPage(context);
+                await Future.delayed(const Duration(seconds: 2));
+                Navigator.pop(context);
               }
 
           }
