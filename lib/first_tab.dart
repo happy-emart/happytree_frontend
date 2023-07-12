@@ -75,6 +75,7 @@ class _FirstState extends State<FirstPage> {
       List<Letter> letters = [];
       List<Container> containers = [];
       for (var LetterJson in json) {
+        print(LetterJson);
         letters.add(Letter.fromJson(LetterJson));
       }
 
@@ -130,45 +131,56 @@ class _FirstState extends State<FirstPage> {
         settingTree(cntrWidth),
         for(var fruit in fruits)
           fruit,
-        Stack(
-          children: [
-            Positioned(
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: deviceHeight / 23,
+          child: Transform.scale(
+            scale: 0.72,
+            child: Positioned(
               left: 0,
               right: 0,
-              bottom: deviceHeight / 25,
-              child: InkWell(
-                onTap: () {
-                  Fluttertoast.showToast(
-                    msg: "오늘은 얼마나 편지가 왔을까~",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    backgroundColor: Colors.grey[300],
-                    textColor: Colors.black,
-                    fontSize: 16.0,
-                  );
-                },
-                child: Image.asset(
-                  "assets/images/namesign.png",
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-            Positioned.fill(
-              child: Align(
+              child: Stack(
                 alignment: Alignment.center,
-                child: Text(
-                  userName,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: "mainfont.ttf",
-                    fontSize: 40.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      // Fluttertoast.showToast(
+                      //   msg: "오늘은 얼마나 편지가 왔을까~",
+                      //   toastLength: Toast.LENGTH_SHORT,
+                      //   gravity: ToastGravity.TOP,
+                      //   backgroundColor: Colors.grey[300],
+                      //   textColor: Colors.black,
+                      //   fontSize: 16.0,
+                      // );
+                      showCustomToast(context, "오늘은 편지가 얼마나 왔을까~");
+                    },
+                    child: Image.asset(
+                      "assets/images/namesign.png",
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
+                  Text(
+                    userName,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontFamily: "mainfont",
+                      fontSize: 60.0,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      shadows: <Shadow>[
+                        Shadow(
+                          offset: Offset(0.5, 0.5),
+                          blurRadius: 3.0,
+                          color: Color.fromARGB(255, 113, 113, 113),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ],
     );
@@ -332,84 +344,84 @@ class _FirstState extends State<FirstPage> {
           );
   }
 
-    void FlutterDialog(BuildContext context, int id) async {
-      try
-      {
-        final String Url = "$baseUrl/letter?id=$id";
-        final jwtToken = await getJwtToken();
-        final request = Uri.parse(Url);
-        final headers = <String, String> {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $jwtToken'
-        };
+  void FlutterDialog(BuildContext context, int id) async {
+    try
+    {
+      var Url = "$baseUrl/letter?id=$id";
+      var jwtToken = await getJwtToken();
+      var request = Uri.parse(Url);
+      var headers = <String, String> {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $jwtToken'
+      };
 
-        final response = await http.get(request, headers: headers);
-        Map<String, dynamic> data = jsonDecode(response.body);
-        String text = data['text'];
-        int senderId = data['senderId'];
-        String username = await getSenderById(senderId);
-        final title = '$username님에게 온 편지';
+      var response = await http.get(request, headers: headers);
+      Map<String, dynamic> data = jsonDecode(response.body);
+      String text = data['text'];
+      int senderId = data['senderId'];
+      String username = await getSenderById(senderId);
+      var title = '$username님에게 온 편지';
 
-        if(response.statusCode==200)
-          {
-            print(response.body);
-            return showDialog(
-                context: context,
-                //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    //Dialog Main Title
-                    title: Column(
-                      children: <Widget>[
-                        Text('$username님에게서 온 편지'),
-                      ],
-                    ),
-                    // title: Text("편지"),
-                    //
-                    content: Container(
-                      alignment: Alignment.center,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Text(
-                              text,
-                              style: const TextStyle(fontSize: 16.0),
-                            ),
-                            // getLetterById.getContents(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    actions: <Widget>[
-                      Align(
-                        alignment: Alignment.center,
-                        child: TextButton(
-                          // alignment: Alignme
-                          child: const Text("잘 읽었어요"),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
+      if(response.statusCode==200)
+        {
+          print(response.body);
+          return showDialog(
+              context: context,
+              //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0)),
+                  //Dialog Main Title
+                  title: Column(
+                    children: <Widget>[
+                      Text('$username님에게서 온 편지'),
                     ],
-                  );
-                }
-            );
-          }
-        else
-          {
-            throw const HttpException("You cannot access to letter");
-          }
-      }
-      catch(error)
-      {
-        print('error : $error');
-      }
+                  ),
+                  // title: Text("편지"),
+                  //
+                  content: Container(
+                    alignment: Alignment.center,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Text(
+                            text,
+                            style: const TextStyle(fontSize: 16.0),
+                          ),
+                          // getLetterById.getContents(),
+                        ],
+                      ),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    Align(
+                      alignment: Alignment.center,
+                      child: TextButton(
+                        // alignment: Alignme
+                        child: const Text("잘 읽었어요"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              }
+          );
+        }
+      else
+        {
+          throw const HttpException("You cannot access to letter");
+        }
+    }
+    catch(error)
+    {
+      print('error : $error');
+    }
 
   }
 
@@ -423,7 +435,6 @@ class _FirstState extends State<FirstPage> {
     buildTreeOfMe(),
     getOthersTreeView(),
     const Text("hiiiii"),
-    const Text("second hiiii"),
   ];
 
   FutureBuilder<List<User>> getOthersTreeView() {
@@ -587,7 +598,14 @@ class _FirstState extends State<FirstPage> {
                   centerHeight = constraints.maxHeight;
                   centerWidth = constraints.maxWidth;
                   return Center(
-                    child: _widgetOptions.elementAt(_selectedIndex),
+                    child: AnimatedSwitcher(
+                      duration: Duration(milliseconds: 200),
+                      transitionBuilder: (Widget child, Animation<double> animation) {
+                        // Change the transition according to your needs
+                        return FadeTransition(child: child, opacity: animation);
+                      },
+                      child: _widgetOptions.elementAt(_selectedIndex),
+                    ),
                   );
                 },
               ),
@@ -617,20 +635,16 @@ class _FirstState extends State<FirstPage> {
                     color: const Color.fromARGB(255, 255, 255, 255),
                     tabs: const [
                       GButton(
-                        icon: LineIcons.home,
-                        text: 'Home',
+                        icon: LineIcons.tree,
+                        text: 'My Tree',
                       ),
                       GButton(
                         icon: LineIcons.heart,
-                        text: 'Likes',
+                        text: 'Our Tree',
                       ),
                       GButton(
-                        icon: LineIcons.search,
-                        text: 'Search',
-                      ),
-                      GButton(
-                        icon: LineIcons.user,
-                        text: 'Profile',
+                        icon: LineIcons.comment,
+                        text: 'Rolling Paper',
                       ),
                     ],
                     selectedIndex: _selectedIndex,
@@ -751,4 +765,25 @@ List<List<T>> splitListIntoChunks<T>(List<T> list, int chunkSize) {
   }
   return chunks;
 }
+
+void showCustomToast(BuildContext context, String message) {
+  final scaffoldMessenger = ScaffoldMessenger.of(context);
+  scaffoldMessenger.removeCurrentSnackBar();
+  scaffoldMessenger.showSnackBar(
+    SnackBar(
+      content: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontFamily: 'mainfont',
+          fontSize: 22.0,
+          color: Colors.white,
+        ),
+      ),
+      duration: Duration(seconds: 2),
+      backgroundColor: Color.fromARGB(255, 94, 94, 94),
+    ),
+  );
+}
+
 
