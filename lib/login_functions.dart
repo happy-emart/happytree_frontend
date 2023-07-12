@@ -5,11 +5,8 @@ import 'package:flutter_application_1/kakao_login.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_1/first_tab.dart';
-import 'package:flutter_application_1/main.dart';
 
 import 'dialog_builders.dart';
-import 'login.dart';
-import 'first_tab.dart';
 
 String baseUrl = "http://168.131.151.213:4040";
 
@@ -27,9 +24,9 @@ class LoginFunctions {
     // await Future.delayed(const Duration(seconds: 2));
     // if (isSuccessed == "true") return "로그인에 성공했습니다." 
     // else return null;
-    _login(loginData.email, loginData.password, context);
+    var str = await _login(loginData.email, loginData.password, context);
     await Future.delayed(const Duration(seconds: 2));
-    return null;
+    return str;
   }
 
   /// Sign up action that will be performed on click to action button in sign up mode.
@@ -37,7 +34,7 @@ class LoginFunctions {
     if (signupData.password != signupData.confirmPassword) {
       return '비밀번호가 일치하지 않습니다.';
     }
-    _signup(signupData.email, signupData.password, signupData.name);
+    var str = await _signup(signupData.email, signupData.password, signupData.name);
     await Future.delayed(const Duration(seconds: 2));
     return null;
   }
@@ -46,7 +43,7 @@ class LoginFunctions {
   Future<String?> socialLogin(String type) async {
     await Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => KakaoApp()),
+      MaterialPageRoute(builder: (context) => const KakaoApp()),
     );
     // await Future.delayed(const Duration(seconds: 2));
     return "null";
@@ -63,7 +60,7 @@ class LoginFunctions {
   }
 }
 
-void _login(String id, String pw, BuildContext context) async {
+Future<String> _login(String id, String pw, BuildContext context) async {
   final String Url = "$baseUrl/auth";
   final request = Uri.parse(Url);
   var headers = <String, String> {
@@ -76,24 +73,31 @@ void _login(String id, String pw, BuildContext context) async {
   };
 
   http.Response response;
-
-  response = await http.post(request, headers: headers, body: json.encode(body));
-  if(response.statusCode == 200)
-  {
-    storeJwtToken(response.body);
-    await Future.delayed(const Duration(seconds: 2));
-    // return "true";
-    startFirstPage(context);
-  }
-  else
-  {
-    final error = json.decode(response.body);
-    print('Request failed with status: $error');
-    // return "false";
-  }
+  try {
+    response = await http.post(request, headers: headers, body: json.encode(body));
+    if(response.statusCode == 200)
+    {
+      storeJwtToken(response.body);
+      await Future.delayed(const Duration(seconds: 2));
+      startFirstPage(context);
+      return "로그인에 성공했습니다";
+    }
+    else
+    {
+      final error = json.decode(response.body);
+      print('Request failed with status: $error');
+      return "이메일과 비밀번호가 일치하지 않거나, 가입하지 않은 회원입니다.";
+    }
+  } 
+  catch(error)
+    {
+      print('error : $error');
+      return "이메일과 비밀번호가 일치하지 않거나, 가입하지 않은 회원입니다.";
+      return "서버와 연결 시도 중 문제가 발생했습니다.";
+    }
 }
 
-void _signup(String id, String pw, String username) async {
+Future<String> _signup(String id, String pw, String username) async {
   final String Url = "$baseUrl/signup";
   final request = Uri.parse(Url);
   var headers = <String, String> {
@@ -107,20 +111,48 @@ void _signup(String id, String pw, String username) async {
   };
 
   http.Response response;
-
+  try {
   response = await http.post(request, headers: headers, body: json.encode(body));
-  if(response.statusCode == 200)
-  {
-    await Future.delayed(const Duration(seconds: 2));
-    print('Signup completed!');
-  }
-  else
-  {
-    print('Signup failed with status');
-  }
+    if(response.statusCode == 200)
+    {
+      await Future.delayed(const Duration(seconds: 2));
+      print('Signup completed!');
+      return "회원가입을 완료했습니다.";
+    }
+    else
+    {
+      print('Signup failed with status');
+      return "서버와 연결 시도 중 문제가 발생했습니다.";
+    }
+  } 
+  catch(error)
+    {
+      print('error : $error');
+      return "서버와 연결 시도 중 문제가 발생했습니다.";
+    }
 }
 
 Future<void> storeJwtToken(String token) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setString('jwtToken', token);
+}
+
+void showCustomToast(BuildContext context, String message) {
+  final scaffoldMessenger = ScaffoldMessenger.of(context);
+  scaffoldMessenger.removeCurrentSnackBar();
+  scaffoldMessenger.showSnackBar(
+    SnackBar(
+      content: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontFamily: 'mainfont',
+          fontSize: 22.0,
+          color: Colors.white,
+        ),
+      ),
+      duration: const Duration(seconds: 2),
+      backgroundColor: const Color.fromARGB(255, 94, 94, 94),
+    ),
+  );
 }

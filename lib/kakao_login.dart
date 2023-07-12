@@ -1,9 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/first_tab.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:async/async.dart';
+import 'package:animated_login/animated_login.dart';
+import 'dialog_builders.dart';
 
 class KakaoApp extends StatelessWidget {
   const KakaoApp({super.key});
@@ -41,10 +43,10 @@ class _WebViewPageState extends State<WebViewPage> {
             Uri uri = Uri.parse(url.toString());
             String? data = uri.queryParameters['data'];
 
-            if(data == "")
+            if(data == "" || data == null)
               {
                 print("kakao login not suc");
-                // Navigator.pop(context);
+                DialogBuilder(context).showResultDialog('다시 시도해주세요.');
                 await Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const MyApp()),
@@ -53,7 +55,7 @@ class _WebViewPageState extends State<WebViewPage> {
             else
               {
                 print("kakao login succeeded");
-                storeJwtToken(data!);
+                storeJwtToken(data);
                 // await Future.delayed(const Duration(seconds: 2));
                 // Navigator.pop(context);
                 await Navigator.pushReplacement(
