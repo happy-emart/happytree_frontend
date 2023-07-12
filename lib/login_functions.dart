@@ -44,13 +44,12 @@ class LoginFunctions {
 
   /// Social login callback example.
   Future<String?> socialLogin(String type) async {
-    await Navigator.push(
+    await Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const KakaoApp()),
+      MaterialPageRoute(builder: (context) => KakaoApp()),
     );
     // await Future.delayed(const Duration(seconds: 2));
-    startFirstPage(context);
-    return null;
+    return "null";
   }
 
   /// Action that will be performed on click to "Forgot Password?" text/CTA.

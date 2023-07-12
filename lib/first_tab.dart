@@ -42,8 +42,8 @@ class _FirstState extends State<FirstPage> {
     return prefs.getString('jwtToken');
   }
 
-  Future<List<User>> getUsersList(int id) async {
-    final request = Uri.parse("$baseUrl/get_user_of_farm?id=$id");
+  Future<List<User>> getUsersList() async {
+    final request = Uri.parse("$baseUrl/users");
     final jwtToken = await getJwtToken();
     final headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -59,23 +59,6 @@ class _FirstState extends State<FirstPage> {
     return users;
   }
 
-  Future<List<Farm>> getFarmList() async {
-      final request = Uri.parse("$baseUrl/farm_list");
-      final jwtToken = await getJwtToken();
-      final headers = <String, String> {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $jwtToken'
-      };
-
-      var response = await http.get(request, headers: headers);
-      var json = jsonDecode(response.body);
-      List<Farm> farms = [];
-      for (var farmJson in json) {
-        farms.add(Farm.fromJson(farmJson));
-      }
-      return farms;
-    }
-  
   Future<List<Container>> fetchFruits() async {
     final String Url = "$baseUrl/received_letters";
     final jwtToken = await getJwtToken();
@@ -205,69 +188,69 @@ class _FirstState extends State<FirstPage> {
 
   Container settingTree(double cntrWidth) {
     return Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/tree.png'),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        height: cntrWidth,
-                        width: cntrWidth,
-                      ),
-                    ]
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/tree.png'),
+                      fit: BoxFit.fill,
+                    ),
                   ),
-                ],
-              ),
-            );
+                  height: cntrWidth,
+                  width: cntrWidth,
+                ),
+              ]
+          ),
+        ],
+      ),
+    );
   }
 
   Positioned moon2() {
     return Positioned(
-              top: 580,
-              left: 0,
-              right: 0,
-              child: Transform.scale(
-                scale: 3.8,
-                child: Image.asset(
-                  "assets/images/moon2.png",
-                ),
-              ),
-            );
+      top: 580,
+      left: 0,
+      right: 0,
+      child: Transform.scale(
+        scale: 3.8,
+        child: Image.asset(
+          "assets/images/moon2.png",
+        ),
+      ),
+    );
   }
 
   Positioned moon1() {
     return Positioned(
-              top: 530,
-              left: 0,
-              right: 0,
-              child: Transform.scale(
-                scale: 2.7,
-                child: Image.asset(
-                  "assets/images/moon1.png",
-                ),
-              ),
-            );
+      top: 530,
+      left: 0,
+      right: 0,
+      child: Transform.scale(
+        scale: 2.7,
+        child: Image.asset(
+          "assets/images/moon1.png",
+        ),
+      ),
+    );
   }
 
   Positioned mars2() {
     return Positioned(
-              top: 700,
-              left: 0,
-              right: 0,
-              child: Transform.scale(
-                scale: 3.5,
-                child: Image.asset(
-                  "assets/images/mars2.png",
-                ),
-              ),
-            );
+      top: 700,
+      left: 0,
+      right: 0,
+      child: Transform.scale(
+        scale: 3.5,
+        child: Image.asset(
+          "assets/images/mars2.png",
+        ),
+      ),
+    );
   }
 
   Positioned mars1() {
@@ -287,13 +270,13 @@ class _FirstState extends State<FirstPage> {
   Future<Stack> buildOthersTree(int id, double cntrHeight, double cntrWidth, BuildContext context) async {
     Tuple2<List<Container>, List<Letter>> fruits = await othersFruits(id);
     return Stack(
-            children: [
-              moon1(),
-              settingTree(cntrWidth),
-              for(var fruit in fruits.item1)
-                fruit,
-            ],
-          );
+      children: [
+        moon1(),
+        settingTree(cntrWidth),
+        for(var fruit in fruits.item1)
+          fruit,
+      ],
+    );
   }
 
 
@@ -338,27 +321,27 @@ class _FirstState extends State<FirstPage> {
 
   Container createFruit(BuildContext context, double x, double y, int id) {
     return Container(
-            child: Positioned(
-              top: x,
-              right: y,
-              child: Container(
-                child:
-                  IconButton( 
-                    icon: Transform.scale(
-                      scale: 3.5,
-                      child: Image.asset(
-                        "assets/images/apple.png",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    iconSize: 30,
-                    onPressed: () {
-                      FlutterDialog(context, id);
-                    },
-                  ),
+      child: Positioned(
+        top: x,
+        right: y,
+        child: Container(
+          child:
+          IconButton(
+            icon: Transform.scale(
+              scale: 3.5,
+              child: Image.asset(
+                "assets/images/apple.png",
+                fit: BoxFit.cover,
               ),
             ),
-          );
+            iconSize: 30,
+            onPressed: () {
+              FlutterDialog(context, id);
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   void FlutterDialog(BuildContext context, int id) async {
@@ -380,60 +363,60 @@ class _FirstState extends State<FirstPage> {
       var title = '$username님에게 온 편지';
 
       if(response.statusCode==200)
-        {
-          print(response.body);
-          return showDialog(
-              context: context,
-              //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
-              barrierDismissible: false,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0)),
-                  //Dialog Main Title
-                  title: Column(
-                    children: <Widget>[
-                      Text('$username님에게서 온 편지'),
-                    ],
-                  ),
-                  // title: Text("편지"),
-                  //
-                  content: Container(
-                    alignment: Alignment.center,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Text(
-                            text,
-                            style: const TextStyle(fontSize: 16.0),
-                          ),
-                          // getLetterById.getContents(),
-                        ],
-                      ),
-                    ),
-                  ),
-                  actions: <Widget>[
-                    Align(
-                      alignment: Alignment.center,
-                      child: TextButton(
-                        // alignment: Alignme
-                        child: const Text("잘 읽었어요"),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
+      {
+        print(response.body);
+        return showDialog(
+            context: context,
+            //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                //Dialog Main Title
+                title: Column(
+                  children: <Widget>[
+                    Text('$username님에게서 온 편지'),
                   ],
-                );
-              }
-          );
-        }
+                ),
+                // title: Text("편지"),
+                //
+                content: Container(
+                  alignment: Alignment.center,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Text(
+                          text,
+                          style: const TextStyle(fontSize: 16.0),
+                        ),
+                        // getLetterById.getContents(),
+                      ],
+                    ),
+                  ),
+                ),
+                actions: <Widget>[
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      // alignment: Alignme
+                      child: const Text("잘 읽었어요"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
+        );
+      }
       else
-        {
-          throw const HttpException("You cannot access to letter");
-        }
+      {
+        throw const HttpException("You cannot access to letter");
+      }
     }
     catch(error)
     {
@@ -442,27 +425,134 @@ class _FirstState extends State<FirstPage> {
 
   }
 
+  Future<void> PaperDialog(BuildContext context, int id) async {
+    try
+    {
+      var Url = "$baseUrl/paper?id=$id";
+      var jwtToken = await getJwtToken();
+      var request = Uri.parse(Url);
+      var headers = <String, String> {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $jwtToken'
+      };
 
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
+      var response = await http.get(request, headers: headers);
+      Map<String, dynamic> data = jsonDecode(response.body);
+      String text = data['text'];
+      int senderId = data['senderId'];
+      String username = await getSenderById(senderId);
+      var title = '$username님에게 온 편지';
+
+      if(response.statusCode==200)
+      {
+        print(response.body);
+        return showDialog(
+            context: context,
+            //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                //Dialog Main Title
+                title: Column(
+                  children: <Widget>[
+                    Text('$username님에게서 온 편지'),
+                  ],
+                ),
+                // title: Text("편지"),
+                //
+                content: Container(
+                  alignment: Alignment.center,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Text(
+                          text,
+                          style: const TextStyle(fontSize: 16.0),
+                        ),
+                        // getLetterById.getContents(),
+                      ],
+                    ),
+                  ),
+                ),
+                actions: <Widget>[
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      // alignment: Alignme
+                      child: const Text("잘 읽었어요"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
+        );
+      }
+      else
+      {
+        throw const HttpException("You cannot access to letter");
+      }
+    }
+    catch(error)
+    {
+      print('error : $error');
+    }
+
+  }
+
+    Future<List<Farm>> getFarmList() async {
+      final request = Uri.parse("$baseUrl/farm_list");
+      final jwtToken = await getJwtToken();
+      final headers = <String, String> {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $jwtToken'
+      };
+
+      var response = await http.get(request, headers: headers);
+      var json = jsonDecode(response.body);
+      List<Farm> farms = [];
+      for (var farmJson in json) {
+        farms.add(Farm.fromJson(farmJson));
+      }
+      return farms;
+    }
+
+    Future<List<Paper>> getPageList(int id) async {
+    final request = Uri.parse("$baseUrl/get_paper_of_farm?id=$id");
+    final jwtToken = await getJwtToken();
+    final headers = <String, String> {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    var response = await http.get(request, headers: headers);
+    var json = jsonDecode(response.body);
+    print(response.body);
+    List<Paper> papers = [];
+    for (var paperJson in json) {
+      papers.add(Paper.fromJson(paperJson));
+    }
+    return papers;
+  }
 
 
-  late final List<Widget> _widgetOptions = <Widget>[
-    buildTreeOfMe(),
-    getOthersFarmView(),
-    const Text("hiiiii"),
-  ];
 
-  void getOthersTreeView(BuildContext context, int id) {
-    Navigator.push(context,
+  void getOthersPaperView(BuildContext context, int id) {
+    Navigator.push(
+      context,
       MaterialPageRoute(
-        builder: (BuildContext context) => FutureBuilder<List<User>>(
-          future: getUsersList(id),
-          builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+        builder: (BuildContext context) => FutureBuilder<List<Paper>>(
+          future: getPageList(id),
+          builder: (BuildContext context, AsyncSnapshot<List<Paper>> snapshot) {
             if (snapshot.hasData) {
-              List<User> users = snapshot.data!;
-              List<List<User>> userChunks = splitListIntoChunks(users, 3);
+              List<Paper> papers = snapshot.data!;
+              List<List<Paper>> paperChunks = splitListIntoChunks(papers, 3);
               return SingleChildScrollView(
                 child: AnimationLimiter(
                   child: Column(
@@ -471,18 +561,25 @@ class _FirstState extends State<FirstPage> {
                       childAnimationBuilder: (widget) => SlideAnimation(
                         horizontalOffset: 100.0,
                         child: FadeInAnimation(
-                          child: widget,
+                          child: Material( // Wrap the widget with Material
+                            child: widget,
+                          ),
                         ),
                       ),
-                      children: userChunks.map((userChunk) {
+                      children: paperChunks.map((paperChunk) {
                         return Row(
-                          children: userChunk.map((user) {
+                          children: paperChunk.map((paper) {
                             return Expanded(
-                              child: ImageThumbnail(
-                                image: "assets/images/apple.png",
-                                name: user.username,
-                                id: user.id,
-                                func: () => openOthersTreePage(context, user.id),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await PaperDialog(context, paper.id);
+                                },
+                                child: ImageThumbnail(
+                                  image: "assets/images/apple.png",
+                                  name: paper.senderId.toString(),
+                                  id: paper.id,
+                                  func: () => (),
+                                ),
                               ),
                             );
                           }).toList(),
@@ -503,29 +600,7 @@ class _FirstState extends State<FirstPage> {
     );
   }
 
-  void openOthersTreePage(BuildContext context, int othersId) {
-    Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-            builder: (BuildContext context) {
-              return Stack(
-                children: [
-                  Image.asset(
-                    backgroundImagePath,
-                    height: deviceHeight,
-                    width: deviceWidth,
-                    fit: BoxFit.cover,
-                  ),
-                  Scaffold(
-                    backgroundColor: Colors.transparent,
-                    body: buildOthersTreePage(othersId),
-                  )
-                ],
-              );
-            }
-        )
-    );
-  }
+
 
   FutureBuilder<List<Farm>> getOthersFarmView() {
     return FutureBuilder<List<Farm>>(
@@ -553,7 +628,7 @@ class _FirstState extends State<FirstPage> {
                             image: "assets/images/apple.png",
                             name: farm.name,
                             id: farm.id,
-                            func: () => getOthersTreeView(context, farm.id),
+                            func: () => getOthersPaperView(context, farm.id),
                           ),
                         );
                       }).toList(),
@@ -573,7 +648,86 @@ class _FirstState extends State<FirstPage> {
   }
 
 
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle =
+  TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
 
+
+  late final List<Widget> _widgetOptions = <Widget>[
+    buildTreeOfMe(),
+    getOthersTreeView(),
+    getOthersFarmView(),
+  ];
+
+  FutureBuilder<List<User>> getOthersTreeView() {
+    return FutureBuilder<List<User>>(
+      future: getUsersList(),
+      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+        if (snapshot.hasData) {
+          List<User> users = snapshot.data!;
+          List<List<User>> userChunks = splitListIntoChunks(users, 3);
+          return SingleChildScrollView(
+            child: AnimationLimiter(
+              child: Column(
+                children: AnimationConfiguration.toStaggeredList(
+                  duration: const Duration(milliseconds: 500),
+                  childAnimationBuilder: (widget) => SlideAnimation(
+                    horizontalOffset: 100.0,
+                    child: FadeInAnimation(
+                      child: widget,
+                    ),
+                  ),
+                  children: userChunks.map((userChunk) {
+                    return Row(
+                      children: userChunk.map((user) {
+                        return Expanded(
+                          child: ImageThumbnail(
+                            image: "assets/images/apple.png",
+                            name: user.username,
+                            id: user.id,
+                            func: () => openOthersTreePage(context, user.id),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
+
+  void openOthersTreePage(BuildContext context, int othersId) {
+    Navigator.push(
+        context,
+        MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return Stack(
+                children: [
+                  Image.asset(
+                    backgroundImagePath,
+                    height: deviceHeight,
+                    width: deviceWidth,
+                    fit: BoxFit.cover,
+                  ),
+                  Scaffold(
+                    backgroundColor: Colors.transparent,
+                    body: buildOthersTreePage(othersId),
+                  )
+                ],
+              );
+            }
+        )
+    );
+  }
 
   Stack buildOthersTreePage(int othersId) {
     return Stack(
@@ -638,13 +792,13 @@ class _FirstState extends State<FirstPage> {
     return FutureBuilder<Stack>(
       future: buildOthersTree(id, centerWidth, centerWidth, context),
       builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
-      if (snapshot.hasData) {
-        return snapshot.data!;
-      } else {
-        return const CircularProgressIndicator();
-      }
-    },
-  );
+        if (snapshot.hasData) {
+          return snapshot.data!;
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
   }
 
   @override
@@ -758,7 +912,7 @@ class ImageThumbnail extends StatelessWidget {
           // decoration: BoxDecoration(
           //   image: DecorationImage(fit: BoxFit.fill, image: AssetImage(image)),
           //   borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-          child: IconButton( 
+          child: IconButton(
             icon: Transform.scale(
               scale: 1.5,
               child: Image.asset(
@@ -773,9 +927,9 @@ class ImageThumbnail extends StatelessWidget {
           ),
         ),
         Container(
-          color: Colors.black87,
-          alignment: Alignment.center,
-          child:
+            color: Colors.black87,
+            alignment: Alignment.center,
+            child:
             Text(name, style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white))),
         const SizedBox(height: 20)
       ],
@@ -811,17 +965,17 @@ class Letter {
   final int imgType;
 
   Letter({required this.id, required this.senderId, required this.receivedId, required this.text,
-  required this.posX, required this.posY, required this.imgType});
+    required this.posX, required this.posY, required this.imgType});
 
   factory Letter.fromJson(Map<String, dynamic> json) {
     return Letter(
-      id: json['id'],
-      receivedId: json['receiverId'],
-      senderId: json['senderId'],
-      text: json['text'],
-      posX: json['posX'].toDouble(),
-      posY: json['posY'].toDouble(),
-      imgType: json['imgType']
+        id: json['id'],
+        receivedId: json['receiverId'],
+        senderId: json['senderId'],
+        text: json['text'],
+        posX: json['posX'].toDouble(),
+        posY: json['posY'].toDouble(),
+        imgType: json['imgType']
     );
   }
 }
@@ -840,6 +994,23 @@ class Farm {
   }
 }
 
+class Paper {
+  final int id;
+  final int farmId;
+  final String text;
+  final int senderId;
+
+  Paper({required this.id, required this.farmId, required this.text, required this.senderId});
+
+  factory Paper.fromJson(Map<String, dynamic> json) {
+    return Paper(
+      id: json['id'],
+      text: json['text'],
+      farmId: json['farmId'],
+      senderId: json['senderId']
+    );
+  }
+}
 
 List<List<T>> splitListIntoChunks<T>(List<T> list, int chunkSize) {
   List<List<T>> chunks = [];
@@ -868,5 +1039,4 @@ void showCustomToast(BuildContext context, String message) {
     ),
   );
 }
-
 
