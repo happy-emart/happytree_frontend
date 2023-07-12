@@ -622,16 +622,15 @@ class _FirstState extends State<FirstPage> {
     List<Paper> papers = await getPageList(id);
     Navigator.push(
       context,
-      MaterialPageRoute<void>(
-        builder: (context) => FutureBuilder<List<Paper>>(
-          future: Future.value(papers),
-          builder: (BuildContext context, AsyncSnapshot<List<Paper>> snapshot) {
-            if (snapshot.hasData) {
-              List<Paper> papers = snapshot.data!;
-              List<List<Paper>> paperChunks = splitListIntoChunks(papers, 3);
-              return Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: SingleChildScrollView(
+      MaterialPageRoute(
+        builder: (context) => Material(
+          child: FutureBuilder<List<Paper>>(
+            future: Future.value(papers),
+            builder: (BuildContext context, AsyncSnapshot<List<Paper>> snapshot) {
+              if (snapshot.hasData) {
+                List<Paper> papers = snapshot.data!;
+                List<List<Paper>> paperChunks = splitListIntoChunks(papers, 3);
+                return SingleChildScrollView(
                   child: AnimationLimiter(
                     child: Column(
                       children: [
@@ -648,6 +647,9 @@ class _FirstState extends State<FirstPage> {
                     },
                   ),
                 ),
+// =======
+//                           child: Icon(Icons.add),
+// >>>>>>> refs/remotes/origin/main
                         ),
                         ...paperChunks.map((paperChunk) {
                           return Row(
@@ -671,22 +673,18 @@ class _FirstState extends State<FirstPage> {
                       ],
                     ),
                   ),
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return CircularProgressIndicator();
-            }
-          },
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return CircularProgressIndicator();
+              }
+            },
+          ),
         ),
       ),
     );
   }
-
-
-
-
 
   FutureBuilder<List<Farm>> getOthersFarmView() {
     return FutureBuilder<List<Farm>>(
