@@ -7,11 +7,11 @@ import 'package:flutter_application_1/writing_letter.dart';
 import 'package:flutter_application_1/writing_papaer.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:tuple/tuple.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 String backgroundImagePath = 'assets/images/universe5.jpg';
 String baseUrl = "http://168.131.151.213:4040";
@@ -24,6 +24,30 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstState extends State<FirstPage> {
+  // Refresher
+  final RefreshController _refreshController1 = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController2 = RefreshController(initialRefresh: false);
+
+  void refreshData1() async {
+    setState(() {
+      buildTreeOfMe();
+  });
+    _refreshController1.refreshCompleted();
+  }
+  void refreshData2() async {
+    setState(() {
+      getOthersTreeView();
+    });
+    _refreshController2.refreshCompleted();
+  }
+  
+  double transform_x(double origin) {
+    return origin * centerHeight / 768;
+  }
+  double transform_y(double origin) {
+    return origin * deviceWidth / 430;
+  }
+
   late double deviceWidth = MediaQuery.of(context).size.width;  // 화면의 가로 크기
   late double deviceHeight = MediaQuery.of(context).size.height; // 화면의 세로 크기
   late double centerWidth = 0.0;
@@ -135,7 +159,7 @@ class _FirstState extends State<FirstPage> {
         Positioned(
           left: 0,
           right: 0,
-          bottom: deviceHeight / 23,
+          top: deviceHeight * 0.68,
           child: Transform.scale(
             scale: 0.72,
             child: Positioned(
@@ -146,14 +170,6 @@ class _FirstState extends State<FirstPage> {
                 children: [
                   InkWell(
                     onTap: () {
-                      // Fluttertoast.showToast(
-                      //   msg: "오늘은 얼마나 편지가 왔을까~",
-                      //   toastLength: Toast.LENGTH_SHORT,
-                      //   gravity: ToastGravity.TOP,
-                      //   backgroundColor: Colors.grey[300],
-                      //   textColor: Colors.black,
-                      //   fontSize: 16.0,
-                      // );
                       showCustomToast(context, "오늘은 편지가 얼마나 왔을까~");
                     },
                     child: Image.asset(
@@ -214,49 +230,49 @@ class _FirstState extends State<FirstPage> {
 
   Positioned moon2() {
     return Positioned(
-      top: 580,
-      left: 0,
-      right: 0,
-      child: Transform.scale(
-        scale: 3.8,
-        child: Image.asset(
-          "assets/images/moon2.png",
-        ),
-      ),
-    );
+              top: transform_y(580.0),
+              left: 0,
+              right: 0,
+              child: Transform.scale(
+                scale: 3.8,
+                child: Image.asset(
+                  "assets/images/moon2.png",
+                ),
+              ),
+            );
   }
 
   Positioned moon1() {
     return Positioned(
-      top: 530,
-      left: 0,
-      right: 0,
-      child: Transform.scale(
-        scale: 2.7,
-        child: Image.asset(
-          "assets/images/moon1.png",
-        ),
-      ),
-    );
+              top: transform_y(530.0),
+              left: 0,
+              right: 0,
+              child: Transform.scale(
+                scale: 2.7,
+                child: Image.asset(
+                  "assets/images/moon1.png",
+                ),
+              ),
+            );
   }
 
   Positioned mars2() {
     return Positioned(
-      top: 700,
-      left: 0,
-      right: 0,
-      child: Transform.scale(
-        scale: 3.5,
-        child: Image.asset(
-          "assets/images/mars2.png",
-        ),
-      ),
-    );
+              top: transform_y(700.0),
+              left: 0,
+              right: 0,
+              child: Transform.scale(
+                scale: 3.5,
+                child: Image.asset(
+                  "assets/images/mars2.png",
+                ),
+              ),
+            );
   }
 
   Positioned mars1() {
     return Positioned(
-      top: 720,
+      top: transform_y(720.0),
       left: 0,
       right: 0,
       child: Transform.scale(
@@ -679,31 +695,37 @@ class _FirstState extends State<FirstPage> {
         if (snapshot.hasData) {
           List<User> users = snapshot.data!;
           List<List<User>> userChunks = splitListIntoChunks(users, 3);
-          return SingleChildScrollView(
-            child: AnimationLimiter(
-              child: Column(
-                children: AnimationConfiguration.toStaggeredList(
-                  duration: const Duration(milliseconds: 500),
-                  childAnimationBuilder: (widget) => SlideAnimation(
-                    horizontalOffset: 100.0,
-                    child: FadeInAnimation(
-                      child: widget,
+          return SmartRefresher(
+            enablePullDown: true,
+            header: const WaterDropHeader(),
+            controller: _refreshController2,
+            onRefresh: refreshData2,
+            child: SingleChildScrollView(
+              child: AnimationLimiter(
+                child: Column(
+                  children: AnimationConfiguration.toStaggeredList(
+                    duration: const Duration(milliseconds: 300),
+                    childAnimationBuilder: (widget) => SlideAnimation(
+                      horizontalOffset: 100.0,
+                      child: FadeInAnimation(
+                        child: widget,
+                      ),
                     ),
+                    children: userChunks.map((userChunk) {
+                      return Row(
+                        children: userChunk.map((user) {
+                          return Expanded(
+                            child: ImageThumbnail(
+                              image: "assets/images/apple.png",
+                              name: user.username,
+                              id: user.id,
+                              func: () => openOthersTreePage(context, user.id),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    }).toList(),
                   ),
-                  children: userChunks.map((userChunk) {
-                    return Row(
-                      children: userChunk.map((user) {
-                        return Expanded(
-                          child: ImageThumbnail(
-                            image: "assets/images/apple.png",
-                            name: user.username,
-                            id: user.id,
-                            func: () => openOthersTreePage(context, user.id),
-                          ),
-                        );
-                      }).toList(),
-                    );
-                  }).toList(),
                 ),
               ),
             ),
@@ -720,10 +742,23 @@ class _FirstState extends State<FirstPage> {
 
   void openOthersTreePage(BuildContext context, int othersId) {
     Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-            builder: (BuildContext context) {
-              return Stack(
+      context,
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          final RefreshController refreshController3 = RefreshController(initialRefresh: false);
+          void refreshData3() async {
+            setState(() {
+            });
+            refreshController3.refreshCompleted();
+          }
+          return Padding(
+            padding: EdgeInsets.fromLTRB(0, deviceHeight*0.07, 0, deviceHeight*0.1),
+            child: SmartRefresher(
+              enablePullDown: true,
+              header: const WaterDropHeader(),
+              controller: refreshController3,
+              onRefresh: refreshData3,
+              child: Stack(
                 children: [
                   Image.asset(
                     backgroundImagePath,
@@ -736,9 +771,11 @@ class _FirstState extends State<FirstPage> {
                     body: buildOthersTreePage(othersId),
                   )
                 ],
-              );
-            }
-        )
+              ),
+            ),
+          );
+        }
+      )
     );
   }
 
@@ -749,7 +786,7 @@ class _FirstState extends State<FirstPage> {
         Positioned(
           left: 0,
           right: 0,
-          bottom: deviceHeight / 30,
+          top: transform_y(deviceHeight * 0.61),
           child: Transform.scale(
             scale: 0.5,
             child: FutureBuilder<Tuple2<List<Container>,List<Letter>>>(
@@ -792,9 +829,14 @@ class _FirstState extends State<FirstPage> {
       future: buildTree(centerWidth, centerWidth, context),
       builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
         if (snapshot.hasData) {
-          print("first tab emerged");
-          return snapshot.data!;
-        } else {
+          return SmartRefresher(
+          enablePullDown: true,
+          header: const WaterDropHeader(),
+          controller: _refreshController1,
+          onRefresh: refreshData1,
+          child: snapshot.data!,
+        );
+      } else {
           return const CircularProgressIndicator();
         }
       },
@@ -834,10 +876,10 @@ class _FirstState extends State<FirstPage> {
                   centerWidth = constraints.maxWidth;
                   return Center(
                     child: AnimatedSwitcher(
-                      duration: Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 300),
                       transitionBuilder: (Widget child, Animation<double> animation) {
                         // Change the transition according to your needs
-                        return FadeTransition(child: child, opacity: animation);
+                        return FadeTransition(opacity: animation, child: child);
                       },
                       child: _widgetOptions.elementAt(_selectedIndex),
                     ),
@@ -1041,15 +1083,14 @@ void showCustomToast(BuildContext context, String message) {
       content: Text(
         message,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
           fontFamily: 'mainfont',
           fontSize: 22.0,
           color: Colors.white,
         ),
       ),
-      duration: Duration(seconds: 2),
-      backgroundColor: Color.fromARGB(255, 94, 94, 94),
+      duration: const Duration(seconds: 2),
+      backgroundColor: const Color.fromARGB(255, 94, 94, 94),
     ),
   );
 }
-

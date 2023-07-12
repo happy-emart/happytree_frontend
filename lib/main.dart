@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/sign_in.dart';
-import 'kakao_login.dart';
-import 'login.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:animated_login/animated_login.dart';
 import 'package:async/async.dart';
-
 import 'dialog_builders.dart';
+
 import 'login_functions.dart' as logIn;
 
 /// Main function.
@@ -25,7 +21,7 @@ class MyApp extends StatelessWidget {
       title: 'Animated Login',
       theme: ThemeData(
           primarySwatch: 
-            ColorService.createMaterialColor(Color.fromARGB(101, 0, 0, 0))
+            ColorService.createMaterialColor(const Color.fromARGB(101, 0, 0, 0))
           ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
@@ -62,10 +58,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return AnimatedLogin(
       onLogin: (LoginData data) async =>
           _authOperation(logIn.LoginFunctions(context).onLogin(data)),
-      // onLogin: (LoginData data) async {
-      //     String? str = await logIn.LoginFunctions(context).onLogin(data);
-      //     if (str == null) return
-      //     }
       onSignup: (SignUpData data) async =>
           _authOperation(logIn.LoginFunctions(context).onSignup(data)),
       // onForgotPassword: _onForgotPassword,
@@ -77,7 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
       loginMobileTheme: _mobileTheme,
       loginTexts: _loginTexts,
       passwordValidator: ValidatorModel(
-          checkUpperCase: false, checkNumber: true,
+          // checkUpperCase: false, checkNumber: true,
+          checkUpperCase: false, checkNumber: false, checkLowerCase: false, checkSpace: false, length: 1,
           validatorCallback: (String? password) => "비밀번호는 문자와 숫자를 모두 포함하고, 6자 이상이어야 합니다"),
       nameValidator: ValidatorModel(
           checkUpperCase: false, checkNumber: false, checkLowerCase: false, checkSpace: false,
@@ -106,9 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
     await _operation?.cancel();
     _operation = CancelableOperation.fromFuture(func);
     final String? res = await _operation?.valueOrCancellation();
-    // if (_operation?.isCompleted == true) {
-    //   DialogBuilder(context).showResultDialog(res ?? 'Successful.');
-    // }
+    if (_operation?.isCompleted == true) {
+      DialogBuilder(context).showResultDialog(res ?? '등록되지 않은 이메일 혹은 비밀번호입니다.');
+    }
     return res;
   }
 
@@ -142,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
           languageDialogTheme: LanguageDialogTheme(
               optionMargin: EdgeInsets.symmetric(horizontal: 80)),
         ),
-        loadingSocialButtonColor: Color(0xFF130101),
+        loadingSocialButtonColor: const Color(0xFF130101),
         loadingButtonColor: Colors.white,
         privacyPolicyStyle: const TextStyle(fontFamily: "mainfont", color: Color(0xFF130101)),
         privacyPolicyLinkStyle: const TextStyle(fontFamily: "mainfont", 
@@ -154,25 +147,25 @@ class _LoginScreenState extends State<LoginScreen> {
   /// You can also set some additional display options such as [showLabelTexts].
   LoginViewTheme get _mobileTheme => LoginViewTheme(
         logoPadding: const EdgeInsets.all(20.0),
-        logoSize: Size(180, 180),
-        welcomeTitleStyle: TextStyle(
+        logoSize: const Size(180, 180),
+        welcomeTitleStyle: const TextStyle(
           fontFamily: "mainfont",
           fontSize: 40,
         ),
-        welcomeDescriptionStyle: TextStyle(
+        welcomeDescriptionStyle: const TextStyle(
           fontFamily: "mainfont",
           fontSize: 25,
         ),
-        changeActionTextStyle: TextStyle(
+        changeActionTextStyle: const TextStyle(
           fontFamily: "mainfont",
           fontSize: 20,
         ),
-        useEmailStyle: TextStyle(
+        useEmailStyle: const TextStyle(
           fontFamily: "mainfont",
           fontSize: 18,
         ),
         actionButtonStyle: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all(Color(0xFF130101)),
+          foregroundColor: MaterialStateProperty.all(const Color(0xFF130101)),
           textStyle: MaterialStateProperty.all<TextStyle>(
             const TextStyle(
               fontFamily: "mainfont",
@@ -180,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
             )
           )
         ),
-        textFormStyle: TextStyle(
+        textFormStyle: const TextStyle(
           color: Colors.black87,
         ),
         showLabelTexts: false,
