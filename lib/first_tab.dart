@@ -12,7 +12,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:tuple/tuple.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-String backgroundImagePath = "assets/images/universe5.jpg";
+String backgroundImagePath = 'assets/images/universe5.jpg';
 String baseUrl = "http://168.131.151.213:4040";
 
 class FirstPage extends StatefulWidget {
