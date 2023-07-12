@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
           validatorCallback: (String? password) => "비밀번호는 문자와 숫자를 모두 포함하고, 6자 이상이어야 합니다"),
       nameValidator: ValidatorModel(
           checkUpperCase: false, checkNumber: false, checkLowerCase: false, checkSpace: false,
-          validatorCallback: (String? name) => "$name"),
+          validatorCallback: (String? name) => "옳지 않은 이름 양식입니다."),
       emailValidator: ValidatorModel(
           validatorCallback: (String? email) => '옳지 않은 이메일 양식입니다'),
       // changeLanguageCallback: (LanguageOption? _language) {
@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _operation = CancelableOperation.fromFuture(func);
     final String? res = await _operation?.valueOrCancellation();
     if (_operation?.isCompleted == true) {
-      DialogBuilder(context).showResultDialog(res ?? '등록되지 않은 이메일 혹은 비밀번호입니다.');
+      DialogBuilder(context).showResultDialog(res ?? '$res.');
     }
     return res;
   }

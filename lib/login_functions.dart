@@ -36,7 +36,7 @@ class LoginFunctions {
     }
     var str = await _signup(signupData.email, signupData.password, signupData.name);
     await Future.delayed(const Duration(seconds: 2));
-    return null;
+    return str;
   }
 
   /// Social login callback example.
@@ -92,7 +92,7 @@ Future<String> _login(String id, String pw, BuildContext context) async {
   catch(error)
     {
       print('error : $error');
-      return "이메일과 비밀번호가 일치하지 않거나, 가입하지 않은 회원입니다.";
+      // return "이메일과 비밀번호가 일치하지 않거나, 가입하지 않은 회원입니다.";
       return "서버와 연결 시도 중 문제가 발생했습니다.";
     }
 }
@@ -122,7 +122,8 @@ Future<String> _signup(String id, String pw, String username) async {
     else
     {
       print('Signup failed with status');
-      return "서버와 연결 시도 중 문제가 발생했습니다.";
+      // return "서버와 연결 시도 중 문제가 발생했습니다.";
+      return "서버 문제일지도?";
     }
   } 
   catch(error)

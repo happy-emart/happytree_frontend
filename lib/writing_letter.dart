@@ -60,7 +60,7 @@ class _LetterScreenState extends State<LetterScreen> {
               ),
             ),
             const SizedBox(height: 16.0),
-            sendigButton(argument: argument, letterController: _letterController, widget: widget, receiverId: receiverId),
+            sendingButton(argument: argument, letterController: _letterController, widget: widget, receiverId: receiverId),
           ],
         ),
       ),
@@ -105,8 +105,8 @@ class selectOtherButton extends StatelessWidget {
   }
 }
 
-class sendigButton extends StatelessWidget {
-  const sendigButton({
+class sendingButton extends StatelessWidget {
+  const sendingButton({
     super.key,
     required this.argument,
     required TextEditingController letterController,
@@ -133,7 +133,7 @@ class sendigButton extends StatelessWidget {
         final bottomPoint = topPoint + deviceWidth - poleHeight - imgSize; // img size = 48
         const startPoint = 0.0;
         final endPoint = startPoint + deviceWidth - imgSize; // img size = 48
-
+        
         String letterText = _letterController.text;
         (double, double) getRandPos() {
           return (topPoint + math.Random().nextDouble()*(bottomPoint-topPoint), startPoint + math.Random().nextDouble()*(endPoint-startPoint));
@@ -163,11 +163,11 @@ class sendigButton extends StatelessWidget {
           // 'isAno':
           'posX':posX,
           'posY':posY,
-          // 'img Type'
+          'imgType':math.Random().nextInt(16),
         };
-        print(body);
         sendLetter(body);
         // 작성을 완료했습니다 토스트 띄우기
+        showCustomToast(context, "편지를 보냈어요");
         Navigator.pop(context);
       },
       child: const Text('Submit'),

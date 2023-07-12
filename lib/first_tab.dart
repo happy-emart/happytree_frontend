@@ -27,6 +27,7 @@ class _FirstState extends State<FirstPage> {
   // Refresher
   final RefreshController _refreshController1 = RefreshController(initialRefresh: false);
   final RefreshController _refreshController2 = RefreshController(initialRefresh: false);
+  // final RefreshController _refreshController4 = RefreshController(initialRefresh: false);
 
   void refreshData1() async {
     setState(() {
@@ -40,6 +41,12 @@ class _FirstState extends State<FirstPage> {
     });
     _refreshController2.refreshCompleted();
   }
+  // void refreshData4() async {
+  //   setState(() {
+  //     getOthersFarmView();
+  //   });
+  //   _refreshController4.refreshCompleted();
+  // }
   
   double transform_x(double origin) {
     return origin * centerHeight / 768;
@@ -105,7 +112,7 @@ class _FirstState extends State<FirstPage> {
       }
 
       for(var fruit in letters) {
-        containers.add(createFruit(context, fruit.posX, fruit.posY, fruit.id));
+        containers.add(createFruit(context, fruit.posX, fruit.posY, fruit.id, fruit.fruitType));
       }
       return containers;
     }
@@ -136,7 +143,7 @@ class _FirstState extends State<FirstPage> {
         letters.add(Letter.fromJson(letterJson));
       }
       for(var fruit in letters) {
-        containers.add(createFruit(context, fruit.posX, fruit.posY, fruit.id));
+        containers.add(createFruit(context, fruit.posX, fruit.posY, fruit.id, fruit.fruitType));
       }
       return Tuple2(containers, letters);
     }
@@ -336,7 +343,7 @@ class _FirstState extends State<FirstPage> {
     return "";
   }
 
-  Container createFruit(BuildContext context, double x, double y, int id) {
+  Container createFruit(BuildContext context, double x, double y, int id, int fruitType) {
     return Container(
       child: Positioned(
         top: x,
@@ -347,7 +354,7 @@ class _FirstState extends State<FirstPage> {
             icon: Transform.scale(
               scale: 3.5,
               child: Image.asset(
-                "assets/images/apple.png",
+                getFruitImageRoute(fruitType),
                 fit: BoxFit.cover,
               ),
             ),
@@ -359,6 +366,44 @@ class _FirstState extends State<FirstPage> {
         ),
       ),
     );
+  }
+
+  String getFruitImageRoute(int fruitType) {
+    switch (fruitType) {
+      case 0:
+        return "assets/images/apple.png";
+      case 1:
+        return "assets/images/grape.png";
+      case 2:
+        return "assets/images/kiwi.png";
+      case 3:
+        return "assets/images/lemon.png";
+      case 4:
+        return "assets/images/melon.png";
+      case 5:
+        return "assets/images/orange.png";
+      case 6:
+        return "assets/images/peach.png";
+      case 7:
+        return "assets/images/plan1.png";
+      case 8:
+        return "assets/images/plan2.png";
+      case 9:
+        return "assets/images/plan3.png";
+      case 10:
+        return "assets/images/plan4.png";
+      case 11:
+        return "assets/images/plan5.png";
+      case 12:
+        return "assets/images/plan6.png";
+      case 13:
+        return "assets/images/plan7.png";
+      case 14:
+        return "assets/images/plan8.png";
+      case 15:
+        return "assets/images/plan9.png";
+    }
+    return "assets/images/apple.png";
   }
 
   void FlutterDialog(BuildContext context, int id) async {
@@ -575,46 +620,56 @@ class _FirstState extends State<FirstPage> {
 
   void getOthersPaperView(BuildContext context, int id) async {
     List<Paper> papers = await getPageList(id);
-
     Navigator.push(
       context,
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (context) => FutureBuilder<List<Paper>>(
           future: Future.value(papers),
           builder: (BuildContext context, AsyncSnapshot<List<Paper>> snapshot) {
             if (snapshot.hasData) {
               List<Paper> papers = snapshot.data!;
               List<List<Paper>> paperChunks = splitListIntoChunks(papers, 3);
-              return SingleChildScrollView(
-                child: AnimationLimiter(
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          navigateToPaperScreen(context, id, papers);
-                        },
-                        child: Icon(Icons.add),
-                      ),
-                      ...paperChunks.map((paperChunk) {
-                        return Row(
-                          children: paperChunk.map((paper) {
-                            return Expanded(
-                              child: GestureDetector(
-                                onTap: () async {
-                                  await PaperDialog(context, paper.id);
-                                },
-                                child: ImageThumbnail(
-                                  image: "assets/images/apple.png",
-                                  name: paper.senderId.toString(),
-                                  id: paper.id,
-                                  func: () {},
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SingleChildScrollView(
+                  child: AnimationLimiter(
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            navigateToPaperScreen(context, id, papers);
+                          },
+                          child: Material(
+                  type: MaterialType.transparency, // it can be changed according to your needs
+                  child: IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      navigateToPaperScreen(context, id, papers);
+                    },
+                  ),
+                ),
+                        ),
+                        ...paperChunks.map((paperChunk) {
+                          return Row(
+                            children: paperChunk.map((paper) {
+                              return Expanded(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await PaperDialog(context, paper.id);
+                                  },
+                                  child: ImageThumbnail(
+                                    image: "assets/images/apple.png",
+                                    name: paper.senderId.toString(),
+                                    id: paper.id,
+                                    func: () {},
+                                  ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      }).toList(),
-                    ],
+                              );
+                            }).toList(),
+                          );
+                        }).toList(),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -1019,10 +1074,10 @@ class Letter {
   final String text;
   final double posX;
   final double posY;
-  final int imgType;
+  final int fruitType;
 
   Letter({required this.id, required this.senderId, required this.receivedId, required this.text,
-    required this.posX, required this.posY, required this.imgType});
+    required this.posX, required this.posY, required this.fruitType});
 
   factory Letter.fromJson(Map<String, dynamic> json) {
     return Letter(
@@ -1032,7 +1087,7 @@ class Letter {
         text: json['text'],
         posX: json['posX'].toDouble(),
         posY: json['posY'].toDouble(),
-        imgType: json['imgType']
+        fruitType: json['imgType']
     );
   }
 }
