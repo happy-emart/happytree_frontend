@@ -163,7 +163,7 @@ class sendingButton extends StatelessWidget {
           // 'isAno':
           'posX':posX,
           'posY':posY,
-          'imgType':math.Random().nextInt(16),
+          // 'imgType':math.Random().nextInt(16),
         };
         sendLetter(body);
         // 작성을 완료했습니다 토스트 띄우기

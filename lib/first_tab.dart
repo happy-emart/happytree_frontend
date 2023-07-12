@@ -369,41 +369,40 @@ class _FirstState extends State<FirstPage> {
   }
 
   String getFruitImageRoute(int fruitType) {
-    switch (fruitType) {
-      case 0:
-        return "assets/images/apple.png";
-      case 1:
-        return "assets/images/grape.png";
-      case 2:
-        return "assets/images/kiwi.png";
-      case 3:
-        return "assets/images/lemon.png";
-      case 4:
-        return "assets/images/melon.png";
-      case 5:
-        return "assets/images/orange.png";
-      case 6:
-        return "assets/images/peach.png";
-      case 7:
-        return "assets/images/plan1.png";
-      case 8:
-        return "assets/images/plan2.png";
-      case 9:
-        return "assets/images/plan3.png";
-      case 10:
-        return "assets/images/plan4.png";
-      case 11:
-        return "assets/images/plan5.png";
-      case 12:
-        return "assets/images/plan6.png";
-      case 13:
-        return "assets/images/plan7.png";
-      case 14:
-        return "assets/images/plan8.png";
-      case 15:
-        return "assets/images/plan9.png";
-    }
-    return "assets/images/apple.png";
+    // switch (fruitType) {
+    //   case 0:
+    //     return "assets/images/apple.png";
+    //   case 1:
+    //     return "assets/images/grape.png";
+    //   case 2:
+    //     return "assets/images/kiwi.png";
+    //   case 3:
+    //     return "assets/images/plan9.png";
+    //   case 4:
+    //     return "assets/images/melon.png";
+    //   case 5:
+    //     return "assets/images/orange.png";
+    //   case 6:
+    //     return "assets/images/peach.png";
+    //   case 7:
+    //     return "assets/images/plan1.png";
+    //   case 8:
+    //     return "assets/images/plan2.png";
+    //   case 9:
+    //     return "assets/images/plan3.png";
+    //   case 10:
+    //     return "assets/images/plan4.png";
+    //   case 11:
+    //     return "assets/images/plan5.png";
+    //   case 12:
+    //     return "assets/images/plan6.png";
+    //   case 13:
+    //     return "assets/images/plan7.png";
+    //   case 14:
+    //     return "assets/images/plan8.png";
+    //   case 15:
+    // }
+    return "assets/images/plan8.png";
   }
 
   void FlutterDialog(BuildContext context, int id) async {
@@ -632,45 +631,48 @@ class _FirstState extends State<FirstPage> {
                 List<List<Paper>> paperChunks = splitListIntoChunks(papers, 3);
                 return SingleChildScrollView(
                   child: AnimationLimiter(
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            navigateToPaperScreen(context, id, papers);
-                          },
-                          child: Material(
-                  type: MaterialType.transparency, // it can be changed according to your needs
-                  child: IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () {
-                      navigateToPaperScreen(context, id, papers);
-                    },
-                  ),
-                ),
-// =======
-//                           child: Icon(Icons.add),
-// >>>>>>> refs/remotes/origin/main
-                        ),
-                        ...paperChunks.map((paperChunk) {
-                          return Row(
-                            children: paperChunk.map((paper) {
-                              return Expanded(
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    await PaperDialog(context, paper.id);
-                                  },
-                                  child: ImageThumbnail(
-                                    image: "assets/images/apple.png",
-                                    name: paper.senderId.toString(),
-                                    id: paper.id,
-                                    func: () {},
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.07, 0, 0),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              navigateToPaperScreen(context, id, papers);
+                            },
+                            child: Material(
+                                      type: MaterialType.transparency, // it can be changed according to your needs
+                                      child: IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        navigateToPaperScreen(context, id, papers);
+                      },
+                                      ),
+                                    ),
+                    // =======
+                    //                           child: Icon(Icons.add),
+                    // >>>>>>> refs/remotes/origin/main
+                          ),
+                          ...paperChunks.map((paperChunk) {
+                            return Row(
+                              children: paperChunk.map((paper) {
+                                return Expanded(
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      await PaperDialog(context, paper.id);
+                                    },
+                                    child: ImageThumbnail(
+                                      image: "assets/images/apple.png",
+                                      name: paper.senderId.toString(),
+                                      id: paper.id,
+                                      func: () {},
+                                    ),
                                   ),
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        }).toList(),
-                      ],
+                                );
+                              }).toList(),
+                            );
+                          }).toList(),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -1038,7 +1040,7 @@ class ImageThumbnail extends StatelessWidget {
         ),
         Container(
             color: Colors.black87,
-            alignment: Alignment.center,
+            // alignment: Alignment.center,
             child:
             Text(name, style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white))),
         const SizedBox(height: 20)
