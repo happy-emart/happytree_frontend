@@ -563,59 +563,57 @@ class _FirstState extends State<FirstPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => FutureBuilder<List<Paper>>(
-          future: Future.value(papers),
-          builder: (BuildContext context, AsyncSnapshot<List<Paper>> snapshot) {
-            if (snapshot.hasData) {
-              List<Paper> papers = snapshot.data!;
-              List<List<Paper>> paperChunks = splitListIntoChunks(papers, 3);
-              return SingleChildScrollView(
-                child: AnimationLimiter(
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          navigateToPaperScreen(context, id, papers);
-                        },
-                        child: Icon(Icons.add),
-                      ),
-                      ...paperChunks.map((paperChunk) {
-                        return Row(
-                          children: paperChunk.map((paper) {
-                            return Expanded(
-                              child: GestureDetector(
-                                onTap: () async {
-                                  await PaperDialog(context, paper.id);
-                                },
-                                child: ImageThumbnail(
-                                  image: "assets/images/apple.png",
-                                  name: paper.senderId.toString(),
-                                  id: paper.id,
-                                  func: () {},
+        builder: (context) => Material(
+          child: FutureBuilder<List<Paper>>(
+            future: Future.value(papers),
+            builder: (BuildContext context, AsyncSnapshot<List<Paper>> snapshot) {
+              if (snapshot.hasData) {
+                List<Paper> papers = snapshot.data!;
+                List<List<Paper>> paperChunks = splitListIntoChunks(papers, 3);
+                return SingleChildScrollView(
+                  child: AnimationLimiter(
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            navigateToPaperScreen(context, id, papers);
+                          },
+                          child: Icon(Icons.add),
+                        ),
+                        ...paperChunks.map((paperChunk) {
+                          return Row(
+                            children: paperChunk.map((paper) {
+                              return Expanded(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await PaperDialog(context, paper.id);
+                                  },
+                                  child: ImageThumbnail(
+                                    image: "assets/images/apple.png",
+                                    name: paper.senderId.toString(),
+                                    id: paper.id,
+                                    func: () {},
+                                  ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      }).toList(),
-                    ],
+                              );
+                            }).toList(),
+                          );
+                        }).toList(),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return CircularProgressIndicator();
-            }
-          },
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return CircularProgressIndicator();
+              }
+            },
+          ),
         ),
       ),
     );
   }
-
-
-
-
 
   FutureBuilder<List<Farm>> getOthersFarmView() {
     return FutureBuilder<List<Farm>>(
