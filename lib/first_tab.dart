@@ -28,10 +28,18 @@ class _FirstState extends State<FirstPage> {
   late double centerWidth = 0.0;
   late double centerHeight = 0.0;
   late double poleHeight = deviceWidth*0.13;
-  double imgSize = 48; // 1:1 image
+  double transform_x(double origin) {
+    return origin * centerHeight / 768;
+  }
+  double transform_y(double origin) {
+    return origin * deviceWidth / 430;
+  }
 
-  late final topPoint = (centerHeight - deviceWidth)*0.5; // img size = 48
-  late final bottomPoint = topPoint + deviceWidth - poleHeight - imgSize; // img size = 48
+  late double imgSize = transform_y(48.0); // 1:1 image
+
+  late final topPoint = transform_y((centerHeight - deviceWidth)*0.5); // img size = 48
+  late final bottomPoint = topPoint + transform_y(deviceWidth) - transform_y(poleHeight) - transform_y(imgSize); // img size = 48
+
   late final startPoint = 0.0;
   late final endPoint = startPoint + deviceWidth - imgSize; // img size = 48
   List<int> fruits = [];
@@ -322,8 +330,8 @@ class _FirstState extends State<FirstPage> {
   Container createFruit(BuildContext context, double x, double y, int id) {
     return Container(
             child: Positioned(
-              top: x,
-              right: y,
+              top: x * centerHeight / 768,
+              right: y * deviceWidth / 430,
               child: Container(
                 child:
                   IconButton( 

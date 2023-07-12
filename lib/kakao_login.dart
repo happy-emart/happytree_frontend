@@ -43,13 +43,23 @@ class _WebViewPageState extends State<WebViewPage> {
 
             if(data == "")
               {
-                Navigator.pop(context);
+                print("kakao login not suc");
+                // Navigator.pop(context);
+                await Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyApp()),
+                );
               }
             else
               {
+                print("kakao login succeeded");
                 storeJwtToken(data!);
-                await Future.delayed(const Duration(seconds: 2));
-                Navigator.pop(context);
+                // await Future.delayed(const Duration(seconds: 2));
+                // Navigator.pop(context);
+                await Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const FirstPage()),
+                );
               }
 
           }
