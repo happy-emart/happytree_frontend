@@ -48,7 +48,8 @@ class _WebViewPageState extends State<WebViewPage> {
             else
               {
                 storeJwtToken(data!);
-                startFirstPage(context);
+                await Future.delayed(const Duration(seconds: 2));
+                Navigator.pop(context);
               }
 
           }

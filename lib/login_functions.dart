@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:animated_login/animated_login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/kakao_login.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_1/first_tab.dart';
@@ -43,7 +44,12 @@ class LoginFunctions {
 
   /// Social login callback example.
   Future<String?> socialLogin(String type) async {
-    await Future.delayed(const Duration(seconds: 2));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const KakaoApp()),
+    );
+    // await Future.delayed(const Duration(seconds: 2));
+    startFirstPage(context);
     return null;
   }
 
