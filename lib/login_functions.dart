@@ -44,7 +44,7 @@ class LoginFunctions {
 
   /// Social login callback example.
   Future<String?> socialLogin(String type) async {
-    Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const KakaoApp()),
     );

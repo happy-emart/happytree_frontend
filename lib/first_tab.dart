@@ -42,8 +42,8 @@ class _FirstState extends State<FirstPage> {
     return prefs.getString('jwtToken');
   }
 
-  Future<List<User>> getUsersList() async {
-    final request = Uri.parse("$baseUrl/users");
+  Future<List<User>> getUsersList(int id) async {
+    final request = Uri.parse("$baseUrl/get_user_of_farm?id=$id");
     final jwtToken = await getJwtToken();
     final headers = <String, String> {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -58,6 +58,23 @@ class _FirstState extends State<FirstPage> {
     }
     return users;
   }
+
+  Future<List<Farm>> getFarmList() async {
+      final request = Uri.parse("$baseUrl/farm_list");
+      final jwtToken = await getJwtToken();
+      final headers = <String, String> {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $jwtToken'
+      };
+
+      var response = await http.get(request, headers: headers);
+      var json = jsonDecode(response.body);
+      List<Farm> farms = [];
+      for (var farmJson in json) {
+        farms.add(Farm.fromJson(farmJson));
+      }
+      return farms;
+    }
   
   Future<List<Container>> fetchFruits() async {
     final String Url = "$baseUrl/received_letters";
@@ -433,17 +450,90 @@ class _FirstState extends State<FirstPage> {
 
   late final List<Widget> _widgetOptions = <Widget>[
     buildTreeOfMe(),
-    getOthersTreeView(),
+    getOthersFarmView(),
     const Text("hiiiii"),
   ];
 
-  FutureBuilder<List<User>> getOthersTreeView() {
-    return FutureBuilder<List<User>>(
-      future: getUsersList(),
-      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+  void getOthersTreeView(BuildContext context, int id) {
+    Navigator.push(context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => FutureBuilder<List<User>>(
+          future: getUsersList(id),
+          builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+            if (snapshot.hasData) {
+              List<User> users = snapshot.data!;
+              List<List<User>> userChunks = splitListIntoChunks(users, 3);
+              return SingleChildScrollView(
+                child: AnimationLimiter(
+                  child: Column(
+                    children: AnimationConfiguration.toStaggeredList(
+                      duration: const Duration(milliseconds: 500),
+                      childAnimationBuilder: (widget) => SlideAnimation(
+                        horizontalOffset: 100.0,
+                        child: FadeInAnimation(
+                          child: widget,
+                        ),
+                      ),
+                      children: userChunks.map((userChunk) {
+                        return Row(
+                          children: userChunk.map((user) {
+                            return Expanded(
+                              child: ImageThumbnail(
+                                image: "assets/images/apple.png",
+                                name: user.username,
+                                id: user.id,
+                                func: () => openOthersTreePage(context, user.id),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  void openOthersTreePage(BuildContext context, int othersId) {
+    Navigator.push(
+        context,
+        MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return Stack(
+                children: [
+                  Image.asset(
+                    backgroundImagePath,
+                    height: deviceHeight,
+                    width: deviceWidth,
+                    fit: BoxFit.cover,
+                  ),
+                  Scaffold(
+                    backgroundColor: Colors.transparent,
+                    body: buildOthersTreePage(othersId),
+                  )
+                ],
+              );
+            }
+        )
+    );
+  }
+
+  FutureBuilder<List<Farm>> getOthersFarmView() {
+    return FutureBuilder<List<Farm>>(
+      future: getFarmList(),
+      builder: (BuildContext context, AsyncSnapshot<List<Farm>> snapshot) {
         if (snapshot.hasData) {
-          List<User> users = snapshot.data!;
-          List<List<User>> userChunks = splitListIntoChunks(users, 3);
+          List<Farm> farms = snapshot.data!;
+          List<List<Farm>> farmChunks = splitListIntoChunks(farms, 3);
           return SingleChildScrollView(
             child: AnimationLimiter(
               child: Column(
@@ -455,15 +545,15 @@ class _FirstState extends State<FirstPage> {
                       child: widget,
                     ),
                   ),
-                  children: userChunks.map((userChunk) {
+                  children: farmChunks.map((farmChunk) {
                     return Row(
-                      children: userChunk.map((user) {
+                      children: farmChunk.map((farm) {
                         return Expanded(
                           child: ImageThumbnail(
                             image: "assets/images/apple.png",
-                            name: user.username,
-                            id: user.id,
-                            func: () => openOthersTreePage(context, user.id),
+                            name: farm.name,
+                            id: farm.id,
+                            func: () => getOthersTreeView(context, farm.id),
                           ),
                         );
                       }).toList(),
@@ -483,29 +573,7 @@ class _FirstState extends State<FirstPage> {
   }
 
 
-  void openOthersTreePage(BuildContext context, int othersId) {
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          return Stack(
-            children: [
-              Image.asset(
-                backgroundImagePath,
-                height: deviceHeight,
-                width: deviceWidth,
-                fit: BoxFit.cover,
-              ),
-              Scaffold(
-                backgroundColor: Colors.transparent,
-                body: buildOthersTreePage(othersId),
-              )
-            ],
-          );
-        }
-      )
-    );
-  }
+
 
   Stack buildOthersTreePage(int othersId) {
     return Stack(
@@ -757,6 +825,21 @@ class Letter {
     );
   }
 }
+
+class Farm {
+  final int id;
+  final String name;
+
+  Farm({required this.id, required this.name});
+
+  factory Farm.fromJson(Map<String, dynamic> json) {
+    return Farm(
+        id: json['id'],
+        name: json['name'],
+    );
+  }
+}
+
 
 List<List<T>> splitListIntoChunks<T>(List<T> list, int chunkSize) {
   List<List<T>> chunks = [];
