@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/writing_letter.dart';
+import 'package:flutter_application_1/writing_papaer.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -543,12 +544,27 @@ class _FirstState extends State<FirstPage> {
 
 
 
-  void getOthersPaperView(BuildContext context, int id) {
+  void navigateToPaperScreen(BuildContext context, int id, List<Paper> papers) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (BuildContext context) => FutureBuilder<List<Paper>>(
-          future: getPageList(id),
+        builder: (context) => PaperScreen(
+          argument: Tuple4(deviceWidth, deviceHeight, centerHeight, imgSize),
+          receiverId: id,
+          papers: papers,
+        ),
+      ),
+    );
+  }
+
+  void getOthersPaperView(BuildContext context, int id) async {
+    List<Paper> papers = await getPageList(id);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FutureBuilder<List<Paper>>(
+          future: Future.value(papers),
           builder: (BuildContext context, AsyncSnapshot<List<Paper>> snapshot) {
             if (snapshot.hasData) {
               List<Paper> papers = snapshot.data!;
@@ -556,17 +572,14 @@ class _FirstState extends State<FirstPage> {
               return SingleChildScrollView(
                 child: AnimationLimiter(
                   child: Column(
-                    children: AnimationConfiguration.toStaggeredList(
-                      duration: const Duration(milliseconds: 500),
-                      childAnimationBuilder: (widget) => SlideAnimation(
-                        horizontalOffset: 100.0,
-                        child: FadeInAnimation(
-                          child: Material( // Wrap the widget with Material
-                            child: widget,
-                          ),
-                        ),
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          navigateToPaperScreen(context, id, papers);
+                        },
+                        child: Icon(Icons.add),
                       ),
-                      children: paperChunks.map((paperChunk) {
+                      ...paperChunks.map((paperChunk) {
                         return Row(
                           children: paperChunk.map((paper) {
                             return Expanded(
@@ -578,14 +591,14 @@ class _FirstState extends State<FirstPage> {
                                   image: "assets/images/apple.png",
                                   name: paper.senderId.toString(),
                                   id: paper.id,
-                                  func: () => (),
+                                  func: () {},
                                 ),
                               ),
                             );
                           }).toList(),
                         );
                       }).toList(),
-                    ),
+                    ],
                   ),
                 ),
               );
@@ -599,6 +612,8 @@ class _FirstState extends State<FirstPage> {
       ),
     );
   }
+
+
 
 
 
