@@ -43,7 +43,7 @@ class _WebViewPageState extends State<WebViewPage> {
 
             if(data == "")
               {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
               }
             else
               {
