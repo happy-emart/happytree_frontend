@@ -688,6 +688,7 @@ class _FirstState extends State<FirstPage> {
                 List<Paper> papers = snapshot.data!;
                 List<List<Paper>> paperChunks = splitListIntoChunks(papers, 3);
                 return SingleChildScrollView(
+
                   child: AnimationLimiter(
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.07, 0, 0),
@@ -716,7 +717,7 @@ class _FirstState extends State<FirstPage> {
                                       await PaperDialog(context, paper.id);
                                     },
                                     child: ImagePaperThumbnail(
-                                      image: getFruitImageRoute(Random().nextInt(7)),
+                                      image: getPlanImageRoute(Random().nextInt(7)),
                                       id: paper.id,
                                       func: () async{
                                         await PaperDialog(context, paper.id);
@@ -1089,6 +1090,7 @@ class ImagePlanThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
