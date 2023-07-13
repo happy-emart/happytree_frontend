@@ -508,44 +508,46 @@ class _FirstState extends State<FirstPage> {
   child: Container(
     width: MediaQuery.of(context).size.width * 0.8,  // Set width as per your need
     padding: EdgeInsets.all(10),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,  // Set this
-      children: <Widget>[
-        Column(
-          children: <Widget>[
-            Text(
-              '쓰니: $username',
-              style: TextStyle(
-                fontFamily: "mainfont",
-                fontSize: 25,
-              ),
-            ),
-            Text(
-              "작성일: $date",
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                fontFamily: "mainfont",
-                fontSize: 17,
-              ),
-            ),
-            Text(""),
-          ],
-        ),
-        Container(
-          alignment: Alignment.center,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+    child: SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,  // Set this
+        children: <Widget>[
+          Column(
             children: <Widget>[
               Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 16.0),
+                '쓰니: $username',
+                style: TextStyle(
+                  fontFamily: "mainfont",
+                  fontSize: 25,
+                ),
               ),
-              // getLetterById.getContents(),
+              Text(
+                "작성일: $date",
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontFamily: "mainfont",
+                  fontSize: 17,
+                ),
+              ),
+              Text(""),
             ],
           ),
-        ),
-      ],
+          Container(
+            alignment: Alignment.center,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(
+                  text,
+                  style: const TextStyle(
+                    fontSize: 16.0),
+                ),
+                // getLetterById.getContents(),
+              ],
+            ),
+          ),
+        ],
+      ),
     ),
   ),
 )
@@ -708,47 +710,54 @@ class _FirstState extends State<FirstPage> {
               if (snapshot.hasData) {
                 List<Paper> papers = snapshot.data!;
                 List<List<Paper>> paperChunks = splitListIntoChunks(papers, 3);
-                return SingleChildScrollView(
-                  child: AnimationLimiter(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.07, 0, 0),
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              navigateToPaperScreen(context, id, papers);
-                            },
-                            child: Material(
-                                      type: MaterialType.transparency, // it can be changed according to your needs
-                                      child: IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () {
-                        navigateToPaperScreen(context, id, papers);
-                      },
+                return Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(backgroundImagePath)
+                      ),
+                  ),
+                  child: SingleChildScrollView(
+                    child: AnimationLimiter(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.07, 0, 0),
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                navigateToPaperScreen(context, id, papers);
+                              },
+                              child: Material(
+                                        type: MaterialType.transparency, // it can be changed according to your needs
+                                        child: IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () {
+                          navigateToPaperScreen(context, id, papers);
+                        },
+                                        ),
                                       ),
-                                    ),
-                          ),
-                          ...paperChunks.map((paperChunk) {
-                            return Row(
-                              children: paperChunk.map((paper) {
-                                return Expanded(
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      await PaperDialog(context, paper.id);
-                                    },
-                                    child: ImagePaperThumbnail(
-                                      image: getFruitImageRoute(Random().nextInt(7)),
-                                      id: paper.id,
-                                      func: () async{
+                            ),
+                            ...paperChunks.map((paperChunk) {
+                              return Row(
+                                children: paperChunk.map((paper) {
+                                  return Expanded(
+                                    child: GestureDetector(
+                                      onTap: () async {
                                         await PaperDialog(context, paper.id);
                                       },
+                                      child: ImagePaperThumbnail(
+                                        image: getFruitImageRoute(Random().nextInt(7)),
+                                        id: paper.id,
+                                        func: () async{
+                                          await PaperDialog(context, paper.id);
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }).toList(),
-                            );
-                          }).toList(),
-                        ],
+                                  );
+                                }).toList(),
+                              );
+                            }).toList(),
+                          ],
+                        ),
                       ),
                     ),
                   ),

@@ -22,6 +22,7 @@ class LetterScreen extends StatefulWidget {
 
 class _LetterScreenState extends State<LetterScreen> {
   final TextEditingController _letterController = TextEditingController();
+  bool _checkboxSelected = false;
 
   @override
   void dispose() {
@@ -35,12 +36,35 @@ class _LetterScreenState extends State<LetterScreen> {
     Tuple4<double, double, double, double> argument = widget.argument;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Write a Letter'),
+        title: const Text(
+          '편지를 써 봐요',
+          style: TextStyle(
+            fontFamily: "mainfont",
+            fontSize: 20,
+          ),
+      ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // CheckboxListTile(
+            //   title: Text(
+            //     textAlign:
+            //     "익명으로 쓰고 싶어요!",
+            //     style: TextStyle(
+            //       fontFamily: "mainfont",
+            //       fontSize: 15,
+            //     ),
+            //   ), // You can replace it with your title
+            //   value: _checkboxSelected,
+            //   onChanged: (newValue) {
+            //     setState(() {
+            //       _checkboxSelected = newValue!;
+            //     });
+            //   },
+            //   controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+            // ),
             Expanded(
               child: SingleChildScrollView(
                 child:
@@ -50,7 +74,11 @@ class _LetterScreenState extends State<LetterScreen> {
                         controller: _letterController,
                         maxLines: null, // Allows the TextField to expand vertically as needed
                         decoration: const InputDecoration(
-                          hintText: 'Write your letter here...',
+                          hintStyle: TextStyle(
+                            fontFamily: "mainfont",
+                            fontSize: 15,
+                          ),
+                          hintText: '여기에 편지를 써 주세요',
                           border: OutlineInputBorder(),
                         ),
                       ),
