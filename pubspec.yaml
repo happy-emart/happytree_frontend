@@ -55,6 +55,8 @@ dependencies:
   flutter_login: ^4.1.1
   animated_login: ^1.7.0
   pull_to_refresh: ^2.0.0
+  smartrefresh: ^0.0.2
+  flutter_launcher_icons: ^0.9.2
 
 dev_dependencies:
   flutter_test:
@@ -106,3 +108,15 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+icons_launcher:
+  image_path: "assets/ic_logo_border.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
+
+flutter_icons:
+  android: "launcher_icon" 
+  ios: true
+  image_path: "assets/icon/icon_final.png"

@@ -41,7 +41,6 @@ class _LetterScreenState extends State<LetterScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            selectOtherButton(argument: argument, letterController: _letterController),
             Expanded(
               child: SingleChildScrollView(
                 child:
@@ -68,42 +67,42 @@ class _LetterScreenState extends State<LetterScreen> {
   }
 }
 
-class selectOtherButton extends StatelessWidget {
-  const selectOtherButton({
-    super.key,
-    required this.argument,
-    required TextEditingController letterController,
-  }) : _letterController = letterController;
+// class selectOtherButton extends StatelessWidget {
+//   const selectOtherButton({
+//     super.key,
+//     required this.argument,
+//     required TextEditingController letterController,
+//   }) : _letterController = letterController;
 
-  final Tuple4<double, double, double, double> argument;
-  final TextEditingController _letterController;
+//   final Tuple4<double, double, double, double> argument;
+//   final TextEditingController _letterController;
 
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        // // Handle letter submission
-        // var posX = argument.item1;
-        // var posY = argument.item1;
-        // String letter = _letterController.text;
-        // // set Letter Data
-        // var body = {
-        //   // 'receiverId': receiverId,
-        //   'text': letter,
-        //   // 'openDate':
-        //   // 'isAno':
-        //   'posX':posX,
-        //   'posY':posY,
-        //   // 'img Type'
-        // };
-        // print("작성 완료 : $posX, $posY");
-        // 작성을 완료했습니다 토스트 띄우기
-        Navigator.pop(context);
-      },
-      child: const Text('Select Other User(not implememted)'),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return ElevatedButton(
+//       onPressed: () {
+//         // // Handle letter submission
+//         // var posX = argument.item1;
+//         // var posY = argument.item1;
+//         // String letter = _letterController.text;
+//         // // set Letter Data
+//         // var body = {
+//         //   // 'receiverId': receiverId,
+//         //   'text': letter,
+//         //   // 'openDate':
+//         //   // 'isAno':
+//         //   'posX':posX,
+//         //   'posY':posY,
+//         //   // 'img Type'
+//         // };
+//         // print("작성 완료 : $posX, $posY");
+//         // 작성을 완료했습니다 토스트 띄우기
+//         Navigator.pop(context);
+//       },
+//       child: const Text('Select Other User(not implememted)'),
+//     );
+//   }
+// }
 
 class sendingButton extends StatelessWidget {
   const sendingButton({

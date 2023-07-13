@@ -69,8 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
       loginMobileTheme: _mobileTheme,
       loginTexts: _loginTexts,
       passwordValidator: ValidatorModel(
-          // checkUpperCase: false, checkNumber: true,
-          checkUpperCase: false, checkNumber: false, checkLowerCase: false, checkSpace: false, length: 1,
+          checkUpperCase: false, checkNumber: true,
+          // checkUpperCase: false, checkNumber: false, checkLowerCase: false, checkSpace: false, length: 1,
           validatorCallback: (String? password) => "비밀번호는 문자와 숫자를 모두 포함하고, 6자 이상이어야 합니다"),
       nameValidator: ValidatorModel(
           checkUpperCase: false, checkNumber: false, checkLowerCase: false, checkSpace: false,

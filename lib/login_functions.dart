@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_1/first_tab.dart';
 
 import 'dialog_builders.dart';
+import 'kakao_login.dart';
 
 String baseUrl = "http://168.131.151.213:4040";
 
@@ -92,8 +93,8 @@ Future<String> _login(String id, String pw, BuildContext context) async {
   catch(error)
     {
       print('error : $error');
-      // return "이메일과 비밀번호가 일치하지 않거나, 가입하지 않은 회원입니다.";
-      return "서버와 연결 시도 중 문제가 발생했습니다.";
+      return "이메일과 비밀번호가 일치하지 않거나, 가입하지 않은 회원입니다.";
+      // return "서버와 연결 시도 중 문제가 발생했습니다.";
     }
 }
 

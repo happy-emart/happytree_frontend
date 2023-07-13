@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:tuple/tuple.dart';
+// import 'package:smartrefresh/smartrefresh.dart';
 
 String backgroundImagePath = 'assets/images/universe5.jpg';
 String baseUrl = "http://168.131.151.213:4040";
@@ -25,22 +26,44 @@ class FirstPage extends StatefulWidget {
 
 class _FirstState extends State<FirstPage> {
   // Refresher
+  // final RefreshController _refreshController1 = RefreshController();
   final RefreshController _refreshController1 = RefreshController(initialRefresh: false);
   final RefreshController _refreshController2 = RefreshController(initialRefresh: false);
-  // final RefreshController _refreshController4 = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController4 = RefreshController(initialRefresh: false);
+
+  // void refreshData1() async {
+  //   setState(() {
+  //     hhhhh = buildTreeOfMe();
+  //   });
+  //   await Future.delayed(Duration(milliseconds: 500)); // Delay for visual effect (optional)
+  //   _refreshController1.refreshCompleted();
+  // }
+
+  late FutureBuilder<Stack> stackFuture;
+
+  // @override
+  // void initState() async {
+  //   super.initState();
+  //   stackFuture = await buildTreeOfMe();  // Initial data load
+  // }
 
   void refreshData1() async {
+    var newData = await buildTreeOfMe();
+    // Once the new data is ready, update the state.
     setState(() {
-      buildTreeOfMe();
-  });
+      stackFuture = newData;
+    });
+    await Future.delayed(Duration(milliseconds: 200));
     _refreshController1.refreshCompleted();
   }
+
   void refreshData2() async {
     setState(() {
       getOthersTreeView();
     });
     _refreshController2.refreshCompleted();
   }
+
   // void refreshData4() async {
   //   setState(() {
   //     getOthersFarmView();
@@ -343,6 +366,11 @@ class _FirstState extends State<FirstPage> {
     return "";
   }
 
+  double auxxxx(double aux) {
+    if (aux >= 7) return 5.5;
+    else return 3.5;
+  }
+
   Container createFruit(BuildContext context, double x, double y, int id, int fruitType) {
     return Container(
       child: Positioned(
@@ -352,7 +380,7 @@ class _FirstState extends State<FirstPage> {
           child:
           IconButton(
             icon: Transform.scale(
-              scale: 3.5,
+              scale: auxxxx(fruitType.toDouble()),
               child: Image.asset(
                 getFruitImageRoute(fruitType),
                 fit: BoxFit.cover,
@@ -369,40 +397,39 @@ class _FirstState extends State<FirstPage> {
   }
 
   String getFruitImageRoute(int fruitType) {
-    // switch (fruitType) {
-    //   case 0:
-    //     return "assets/images/apple.png";
-    //   case 1:
-    //     return "assets/images/grape.png";
-    //   case 2:
-    //     return "assets/images/kiwi.png";
-    //   case 3:
-    //     return "assets/images/plan9.png";
-    //   case 4:
-    //     return "assets/images/melon.png";
-    //   case 5:
-    //     return "assets/images/orange.png";
-    //   case 6:
-    //     return "assets/images/peach.png";
-    //   case 7:
-    //     return "assets/images/plan1.png";
-    //   case 8:
-    //     return "assets/images/plan2.png";
-    //   case 9:
-    //     return "assets/images/plan3.png";
-    //   case 10:
-    //     return "assets/images/plan4.png";
-    //   case 11:
-    //     return "assets/images/plan5.png";
-    //   case 12:
-    //     return "assets/images/plan6.png";
-    //   case 13:
-    //     return "assets/images/plan7.png";
-    //   case 14:
-    //     return "assets/images/plan8.png";
-    //   case 15:
-    // }
-    return "assets/images/plan8.png";
+    switch (fruitType) {
+      case 0:
+        return "assets/images/apple.png";
+      case 1:
+        return "assets/images/grape.png";
+      case 2:
+        return "assets/images/kiwi.png";
+      case 3:
+        return "assets/images/plan9.png";
+      case 4:
+        return "assets/images/melon.png";
+      case 5:
+        return "assets/images/orange.png";
+      case 6:
+        return "assets/images/peach.png";
+      case 7:
+        return "assets/images/plan1.png";
+      case 8:
+        return "assets/images/plan2.png";
+      case 9:
+        return "assets/images/plan3.png";
+      case 10:
+        return "assets/images/plan4.png";
+      case 11:
+        return "assets/images/plan5.png";
+      case 12:
+        return "assets/images/plan6.png";
+      case 13:
+        return "assets/images/plan7.png";
+      case 14:
+        return "assets/images/plan8.png";
+    }
+    return "assets/images/apple.png";
   }
 
   void FlutterDialog(BuildContext context, int id) async {
@@ -441,8 +468,6 @@ class _FirstState extends State<FirstPage> {
                     Text('$username님에게서 온 편지'),
                   ],
                 ),
-                // title: Text("편지"),
-                //
                 content: Container(
                   alignment: Alignment.center,
                   child: SingleChildScrollView(
@@ -887,12 +912,24 @@ class _FirstState extends State<FirstPage> {
       builder: (BuildContext context, AsyncSnapshot<Stack> snapshot) {
         if (snapshot.hasData) {
           return SmartRefresher(
-          enablePullDown: true,
-          header: const WaterDropHeader(),
-          controller: _refreshController1,
-          onRefresh: refreshData1,
-          child: snapshot.data!,
-        );
+            enablePullDown: true,
+            header: const WaterDropHeader(),
+            controller: _refreshController1,
+            onRefresh: refreshData1,
+            child: snapshot.data!,
+          );
+          // return PullToRefresh(
+          //   onRefresh: _handleRefresh,
+          //   showChildOpacityTransition: false,
+          //   backgroundColor: Colors.transparent,
+          //   tColor: Colors.grey,
+          //   onFail: failedIndicator(),
+          //   onComplete: completeindicator(),
+          //   onLoading: loadingindicator(),
+          //   refreshController: _refreshController,
+          //   child: StreamBuilder<int>(
+          //     stream: counterStream,
+          //   );
       } else {
           return const CircularProgressIndicator();
         }
