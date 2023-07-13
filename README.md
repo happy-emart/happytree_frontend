@@ -1,18 +1,54 @@
-# happytree_frontend
-=======
-# flutter_application_1
+# Madmory
+> Letter sharing Application for participant of MadCamp (centering on inner join and OAuth security)
 
-A new Flutter project.
+## Development Information
+### ⌛️ Dev. Duration
+30, June, 2023 ~ 12, July, 2023
 
-## Getting Started
+### 👫 The Team
+- Sujee Noh(Chonnam National University, Software Engineering)
+- Yeonguk Jang (KAIST, Computer Science)
 
-This project is a starting point for a Flutter application.
+### 🌏 Dev. Environment
+- ```Java 11```
+- Spring Boot 2.6.7
+- Mybatis 2.3.1
+- Flutter
 
-A few resources to get you started if this is your first Flutter project:
+ ## Motivation
+ With Madmory, you can effortlessly compose heartfelt messages and share them with friends, family, and loved ones, all from the convenience of your smartphone or computer. Whether it's expressing your deepest emotions, conveying gratitude, or simply staying in touch, our application provides a platform where your words can truly come alive.
+ Share your love to other participants with madmory 🥰
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+ ## Main Function
+ ### Section 1. User Handling
+ - Login
+ - Sign up
+ - Sign up with kakao account
+ - Login with kakao account
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![login](/photos/login.jpeg)
+![signup](/photos/signup.jpeg)
+![wrong](/photos/wrong.jpeg)
+![invalid](/photos/invalid.jpeg)
+
+### Section 2. My Tree
+- Read letters user received
+- Display Tree with fruits(letter)
+
+![mytree](/photos/mytree.jpeg)
+
+### Section 3. Write Letter to other user
+- Show list of other users
+- Write letter to selected user
+
+![users](/photos/users.jpeg)
+![writetree](/photos/writetree.jpeg)
+![refresh](/photos/refresh.jpeg)
+![letterform](/photos/letterform.jpeg)
+
+### Section 4. Shared letters
+- List existing groups
+- Write group letter to selected group
+- Read letters written by other users
+
+![farms](/photos/users.farms)
