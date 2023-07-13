@@ -713,7 +713,8 @@ class _FirstState extends State<FirstPage> {
                 return Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(backgroundImagePath)
+                      image: AssetImage(backgroundImagePath),
+                          fit: BoxFit.cover,
                       ),
                   ),
                   child: SingleChildScrollView(
@@ -745,7 +746,7 @@ class _FirstState extends State<FirstPage> {
                                         await PaperDialog(context, paper.id);
                                       },
                                       child: ImagePaperThumbnail(
-                                        image: getFruitImageRoute(Random().nextInt(7)),
+                                        image: getPlanImageRoute(Random().nextInt(7)),
                                         id: paper.id,
                                         func: () async{
                                           await PaperDialog(context, paper.id);
