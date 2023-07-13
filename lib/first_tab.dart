@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/writing_letter.dart';
@@ -391,6 +392,54 @@ class _FirstState extends State<FirstPage> {
     );
   }
 
+  String getAmongImageRoute(int fruitType) {
+    switch (fruitType) {
+      case 0:
+        return "assets/images/among1.png";
+      case 1:
+        return "assets/images/among2.png";
+      case 2:
+        return "assets/images/among3.png";
+      case 3:
+        return "assets/images/among4.png";
+      case 4:
+        return "assets/images/among5.png";
+      case 5:
+        return "assets/images/among6.png";
+      case 6:
+        return "assets/images/among7.png";
+      case 7:
+        return "assets/images/among8.png";
+      case 8:
+        return "assets/images/among9.png";
+    }
+    return "assets/images/apple.png";
+  }
+
+  String getPlanImageRoute(int fruitType)
+  {
+    switch(fruitType)
+    {
+      case 0:
+        return "assets/images/plan1.png";
+      case 1:
+        return "assets/images/plan2.png";
+      case 2:
+        return "assets/images/plan3.png";
+      case 3:
+        return "assets/images/plan4.png";
+      case 4:
+        return "assets/images/plan5.png";
+      case 5:
+        return "assets/images/plan6.png";
+      case 6:
+        return "assets/images/plan7.png";
+      case 7:
+        return "assets/images/plan8.png";
+    }
+    return "assets/images/apple.png";
+  }
+
   String getFruitImageRoute(int fruitType) {
     switch (fruitType) {
       case 0:
@@ -407,22 +456,6 @@ class _FirstState extends State<FirstPage> {
         return "assets/images/orange.png";
       case 6:
         return "assets/images/peach.png";
-      case 7:
-        return "assets/images/plan1.png";
-      case 8:
-        return "assets/images/plan2.png";
-      case 9:
-        return "assets/images/plan3.png";
-      case 10:
-        return "assets/images/plan4.png";
-      case 11:
-        return "assets/images/plan5.png";
-      case 12:
-        return "assets/images/plan6.png";
-      case 13:
-        return "assets/images/plan7.png";
-      case 14:
-        return "assets/images/plan8.png";
     }
     return "assets/images/apple.png";
   }
@@ -694,9 +727,6 @@ class _FirstState extends State<FirstPage> {
                       },
                                       ),
                                     ),
-                    // =======
-                    //                           child: Icon(Icons.add),
-                    // >>>>>>> refs/remotes/origin/main
                           ),
                           ...paperChunks.map((paperChunk) {
                             return Row(
@@ -706,11 +736,12 @@ class _FirstState extends State<FirstPage> {
                                     onTap: () async {
                                       await PaperDialog(context, paper.id);
                                     },
-                                    child: ImageThumbnail(
+                                    child: ImagePaperThumbnail(
                                       image: "assets/images/apple.png",
-                                      name: paper.senderId.toString(),
                                       id: paper.id,
-                                      func: () {},
+                                      func: () async{
+                                        await PaperDialog(context, paper.id);
+                                      },
                                     ),
                                   ),
                                 );
@@ -735,12 +766,13 @@ class _FirstState extends State<FirstPage> {
   }
 
   FutureBuilder<List<Farm>> getOthersFarmView() {
+    Random random = Random();
     return FutureBuilder<List<Farm>>(
       future: getFarmList(),
       builder: (BuildContext context, AsyncSnapshot<List<Farm>> snapshot) {
         if (snapshot.hasData) {
           List<Farm> farms = snapshot.data!;
-          List<List<Farm>> farmChunks = splitListIntoChunks(farms, 3);
+          List<List<Farm>> farmChunks = splitListIntoChunks(farms, 2);
           return SingleChildScrollView(
             child: AnimationLimiter(
               child: Column(
@@ -753,17 +785,20 @@ class _FirstState extends State<FirstPage> {
                     ),
                   ),
                   children: farmChunks.map((farmChunk) {
-                    return Row(
-                      children: farmChunk.map((farm) {
-                        return Expanded(
-                          child: ImageThumbnail(
-                            image: "assets/images/apple.png",
-                            name: farm.name,
-                            id: farm.id,
-                            func: () => getOthersPaperView(context, farm.id),
-                          ),
-                        );
-                      }).toList(),
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(40, 50, 0, 100),
+                      child: Row(
+                        children: farmChunk.map((farm) {
+                          return Expanded(
+                            child: ImagePlanThumbnail(
+                              image: getPlanImageRoute(random.nextInt(8)),
+                              name: farm.name,
+                              id: farm.id,
+                              func: () => getOthersPaperView(context, farm.id),
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     );
                   }).toList(),
                 ),
@@ -803,31 +838,34 @@ class _FirstState extends State<FirstPage> {
             header: const WaterDropHeader(),
             controller: _refreshController2,
             onRefresh: refreshData2,
-            child: SingleChildScrollView(
-              child: AnimationLimiter(
-                child: Column(
-                  children: AnimationConfiguration.toStaggeredList(
-                    duration: const Duration(milliseconds: 300),
-                    childAnimationBuilder: (widget) => SlideAnimation(
-                      horizontalOffset: 100.0,
-                      child: FadeInAnimation(
-                        child: widget,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+              child: SingleChildScrollView(
+                child: AnimationLimiter(
+                  child: Column(
+                    children: AnimationConfiguration.toStaggeredList(
+                      duration: const Duration(milliseconds: 300),
+                      childAnimationBuilder: (widget) => SlideAnimation(
+                        horizontalOffset: 100.0,
+                        child: FadeInAnimation(
+                          child: widget,
+                        ),
                       ),
+                      children: userChunks.map((userChunk) {
+                        return Row(
+                          children: userChunk.map((user) {
+                            return Expanded(
+                              child: ImageThumbnail(
+                                image: getAmongImageRoute(Random().nextInt(9)),
+                                name: user.username,
+                                id: user.id,
+                                func: () => openOthersTreePage(context, user.id),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }).toList(),
                     ),
-                    children: userChunks.map((userChunk) {
-                      return Row(
-                        children: userChunk.map((user) {
-                          return Expanded(
-                            child: ImageThumbnail(
-                              image: "assets/images/apple.png",
-                              name: user.username,
-                              id: user.id,
-                              func: () => openOthersTreePage(context, user.id),
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    }).toList(),
                   ),
                 ),
               ),
@@ -1062,6 +1100,90 @@ void startFirstPage(BuildContext context) {
 }
 
 
+class ImagePlanThumbnail extends StatelessWidget {
+  const ImagePlanThumbnail({Key? key, required this.image, required this.name, required this.id, required this.func,})
+      : super(key: key);
+  final String image;
+  final String name;
+  final int id;
+  final Function func;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 120.0,
+          height: 120.0,
+          margin: const EdgeInsets.only(bottom: 6),
+          // decoration: BoxDecoration(
+          //   image: DecorationImage(fit: BoxFit.fill, image: AssetImage(image)),
+          //   borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+          child: IconButton(
+            icon: Transform.scale(
+              scale: 5,
+              child: Image.asset(
+                image,
+                fit: BoxFit.cover,
+              ),
+            ),
+            iconSize: 30,
+            onPressed: () {
+              func();
+            },
+          ),
+        ),
+        Container(
+            color: Colors.black87,
+            // alignment: Alignment.center,
+            child:
+            Text(name, style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white))),
+        const SizedBox(height: 20)
+      ],
+    );
+  }
+}
+
+class ImagePaperThumbnail extends StatelessWidget {
+  const ImagePaperThumbnail({Key? key, required this.image, required this.id, required this.func,})
+      : super(key: key);
+  final String image;
+  final int id;
+  final Function func;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 120.0,
+          height: 120.0,
+          margin: const EdgeInsets.only(bottom: 6),
+          // decoration: BoxDecoration(
+          //   image: DecorationImage(fit: BoxFit.fill, image: AssetImage(image)),
+          //   borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+          child: IconButton(
+            icon: Transform.scale(
+              scale: 2,
+              child: Image.asset(
+                image,
+                fit: BoxFit.cover,
+              ),
+            ),
+            iconSize: 30,
+            onPressed: () {
+              func();
+            },
+          ),
+        ),
+        const SizedBox(height: 20)
+      ],
+    );
+  }
+}
+
 class ImageThumbnail extends StatelessWidget {
   const ImageThumbnail({Key? key, required this.image, required this.name, required this.id, required this.func,})
       : super(key: key);
@@ -1084,9 +1206,9 @@ class ImageThumbnail extends StatelessWidget {
           //   borderRadius: const BorderRadius.all(Radius.circular(15.0)),
           child: IconButton(
             icon: Transform.scale(
-              scale: 1.5,
+              scale: 3,
               child: Image.asset(
-                "assets/images/apple.png",
+                image,
                 fit: BoxFit.cover,
               ),
             ),
