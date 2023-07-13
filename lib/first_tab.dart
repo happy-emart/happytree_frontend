@@ -737,7 +737,7 @@ class _FirstState extends State<FirstPage> {
                                       await PaperDialog(context, paper.id);
                                     },
                                     child: ImagePaperThumbnail(
-                                      image: "assets/images/apple.png",
+                                      image: getFruitImageRoute(Random().nextInt(7)),
                                       id: paper.id,
                                       func: () async{
                                         await PaperDialog(context, paper.id);
