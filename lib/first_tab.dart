@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:tuple/tuple.dart';
+import 'package:intl/intl.dart';
 // import 'package:smartrefresh/smartrefresh.dart';
 
 String backgroundImagePath = 'assets/images/universe5.jpg';
@@ -40,12 +41,6 @@ class _FirstState extends State<FirstPage> {
   // }
 
   late FutureBuilder<Stack> stackFuture;
-
-  // @override
-  // void initState() async {
-  //   super.initState();
-  //   stackFuture = await buildTreeOfMe();  // Initial data load
-  // }
 
   void refreshData1() async {
     var newData = await buildTreeOfMe();
@@ -431,6 +426,19 @@ class _FirstState extends State<FirstPage> {
     }
     return "assets/images/apple.png";
   }
+  
+  String formatKoreanDate(List<dynamic> date) {
+    if (date.length < 3) {
+      return ''; // Handle invalid date input
+    }
+    
+    final year = date[0];
+    final month = date[1];
+    final day = date[2];
+    
+    final formattedDate = DateFormat('yyyy년 MM월 dd일').format(DateTime(year, month, day));
+    return formattedDate;
+  }
 
   void FlutterDialog(BuildContext context, int id) async {
     try
@@ -447,8 +455,9 @@ class _FirstState extends State<FirstPage> {
       Map<String, dynamic> data = jsonDecode(response.body);
       String text = data['text'];
       int senderId = data['senderId'];
+      String date = formatKoreanDate(data['generatedDate']);
       String username = await getSenderById(senderId);
-      var title = '$username님에게 온 편지';
+      var title = '쓰니: $username';
 
       if(response.statusCode==200)
       {
@@ -456,45 +465,57 @@ class _FirstState extends State<FirstPage> {
         return showDialog(
             context: context,
             //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
-            barrierDismissible: false,
+            // barrierDismissible: false,
             builder: (BuildContext context) {
-              return AlertDialog(
-                // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0)),
-                //Dialog Main Title
-                title: Column(
-                  children: <Widget>[
-                    Text('$username님에게서 온 편지'),
-                  ],
-                ),
-                content: Container(
-                  alignment: Alignment.center,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Text(
-                          text,
-                          style: const TextStyle(fontSize: 16.0),
-                        ),
-                        // getLetterById.getContents(),
-                      ],
-                    ),
-                  ),
-                ),
-                actions: <Widget>[
-                  Align(
-                    alignment: Alignment.center,
-                    child: TextButton(
-                      // alignment: Alignme
-                      child: const Text("잘 읽었어요"),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ],
+              return FractionallySizedBox(
+      widthFactor: 0.9, // Set to your desired width factor (0.9 is 90% of screen width)
+      child: Dialog(
+  shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0)),
+  child: Container(
+    width: MediaQuery.of(context).size.width * 0.8,  // Set width as per your need
+    padding: EdgeInsets.all(10),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,  // Set this
+      children: <Widget>[
+        Column(
+          children: <Widget>[
+            Text(
+              '쓰니: $username',
+              style: TextStyle(
+                fontFamily: "mainfont",
+                fontSize: 25,
+              ),
+            ),
+            Text(
+              "작성일: $date",
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontFamily: "mainfont",
+                fontSize: 17,
+              ),
+            ),
+            Text(""),
+          ],
+        ),
+        Container(
+          alignment: Alignment.center,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 16.0),
+              ),
+              // getLetterById.getContents(),
+            ],
+          ),
+        ),
+      ],
+    ),
+  ),
+)
               );
             }
         );
@@ -527,7 +548,7 @@ class _FirstState extends State<FirstPage> {
       String text = data['text'];
       int senderId = data['senderId'];
       String username = await getSenderById(senderId);
-      var title = '$username님에게 온 편지';
+      var title = '쓰니: $username';
 
       if(response.statusCode==200)
       {
@@ -544,7 +565,7 @@ class _FirstState extends State<FirstPage> {
                 //Dialog Main Title
                 title: Column(
                   children: <Widget>[
-                    Text('$username님에게서 온 편지'),
+                    Text('쓰니: $username'),
                   ],
                 ),
                 // title: Text("편지"),
